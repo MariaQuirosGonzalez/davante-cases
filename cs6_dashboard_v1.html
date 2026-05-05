@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Davante RE · Case Study 6 · Del Excel al dashboard en 4 días</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:    #003594;
+    --navy-dk: #002070;
+    --orange:  #FF5B41;
+    --teal:    #0A7E6E;
+    --teal-lt: #E0F2EE;
+    --sand:    #F7F5F0;
+    --mid:     #E8EEF8;
+    --text:    #1A1A2E;
+    --muted:   #6B7280;
+    --border:  #DDE3EF;
+    --white:   #FFFFFF;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    background: var(--sand);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── COVER ─────────────────────────────────────────── */
+  .cover {
+    background: var(--navy);
+    color: var(--white);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cover-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+
+  .cover-accent {
+    width: 8px; height: 100vh;
+    background: var(--orange);
+    position: absolute; left: 0; top: 0;
+  }
+
+  .cover-inner {
+    position: relative;
+    z-index: 1;
+    padding: 60px 72px 60px 80px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .cover-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .cover-eyebrow {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--orange);
+  }
+
+  .cover-logo {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .cover-main { margin-top: auto; padding-top: 80px; }
+
+  .cover-num {
+    font-family: Arial, sans-serif;
+    font-size: 120px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.05);
+    line-height: 1;
+    position: absolute;
+    top: 50%;
+    right: 60px;
+    transform: translateY(-60%);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .cover-title {
+    font-size: clamp(36px, 5vw, 58px);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+    color: var(--white);
+    max-width: 700px;
+  }
+
+  .cover-title em {
+    font-style: italic;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .cover-subtitle {
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    color: rgba(255,255,255,0.55);
+    margin-top: 20px;
+    letter-spacing: 0.3px;
+  }
+
+  .cover-stats {
+    display: flex;
+    gap: 0;
+    margin-top: 64px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 32px;
+  }
+
+  .cover-stat {
+    flex: 1;
+    padding-right: 32px;
+    border-right: 1px solid rgba(255,255,255,0.1);
+    margin-right: 32px;
+  }
+  .cover-stat:last-child { border-right: none; margin-right: 0; }
+
+  .cover-stat-num {
+    font-size: 36px;
+    font-weight: 400;
+    color: var(--orange);
+    line-height: 1;
+  }
+
+  .cover-stat-label {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    color: rgba(255,255,255,0.45);
+    margin-top: 6px;
+    line-height: 1.4;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .cover-bottom {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* ── LAYOUT ─────────────────────────────────────────── */
+  .layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    min-height: 100vh;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* ── NAV ─────────────────────────────────────────────── */
+  .nav {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding: 48px 0 48px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border-right: 1px solid var(--border);
+    background: var(--sand);
+  }
+
+  .nav-label {
+    font-family: Arial, sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    text-decoration: none;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: var(--muted);
+    transition: color 0.2s;
+    cursor: pointer;
+    border: none;
+    background: none;
+    text-align: left;
+  }
+
+  .nav-item:hover { color: var(--navy); }
+  .nav-item.active { color: var(--navy); font-weight: 700; }
+
+  .nav-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--border);
+    flex-shrink: 0;
+    transition: background 0.2s;
+  }
+
+  .nav-item.active .nav-dot { background: var(--orange); }
+  .nav-item:hover .nav-dot  { background: var(--navy); }
+
+  .nav-num {
+    font-size: 9px;
+    color: var(--border);
+    margin-left: auto;
+    padding-right: 20px;
+  }
+
+  /* ── CONTENT ─────────────────────────────────────────── */
+  .content { padding: 64px 56px; }
+  .section { margin-bottom: 96px; }
+
+  .section-eyebrow {
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-size: clamp(24px, 3vw, 34px);
+    font-weight: 400;
+    color: var(--navy);
+    line-height: 1.15;
+    margin-bottom: 8px;
+  }
+
+  .section-sub {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 36px;
+    line-height: 1.6;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 48px 0;
+  }
+
+  /* ── PAIN CARDS ──────────────────────────────────────── */
+  .pain-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .pain-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 22px;
+    border-left: 4px solid;
+  }
+
+  .pain-card.critical { border-left-color: #E24B4A; }
+  .pain-card.high     { border-left-color: var(--orange); }
+  .pain-card.medium   { border-left-color: var(--navy); }
+
+  .pain-card-title {
+    font-size: 14px;
+    font-weight: 700;
+    font-family: Arial, sans-serif;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .pain-card-desc {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .pain-tag {
+    display: inline-block;
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-top: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .tag-critical { background: #FCEBEB; color: #A32D2D; }
+  .tag-high     { background: #FFF0ED; color: #B33D26; }
+  .tag-medium   { background: var(--mid); color: var(--navy); }
+  .tag-ok       { background: var(--teal-lt); color: var(--teal); }
+
+  /* ── TIMELINE ─────────────────────────────────────────── */
+  .timeline {
+    position: relative;
+    padding-left: 28px;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: var(--border);
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 32px;
+  }
+
+  .timeline-item:last-child { margin-bottom: 0; }
+
+  .timeline-dot {
+    position: absolute;
+    left: -28px;
+    top: 6px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--white);
+    border: 2px solid var(--border);
+    z-index: 1;
+  }
+
+  .timeline-item.done   .timeline-dot { background: var(--navy);   border-color: var(--navy); }
+  .timeline-item.lesson .timeline-dot { background: var(--orange);  border-color: var(--orange); }
+  .timeline-item.active .timeline-dot { background: var(--orange);  border-color: var(--orange); box-shadow: 0 0 0 4px rgba(255,91,65,0.15); }
+
+  .timeline-date {
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .timeline-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+  }
+
+  .timeline-item.lesson .timeline-card {
+    border-left: 3px solid var(--orange);
+  }
+
+  .timeline-item.active .timeline-card {
+    border-left: 3px solid var(--navy);
+    background: var(--mid);
+  }
+
+  .timeline-card-title {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+
+  .timeline-card-desc {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .timeline-tag {
+    display: inline-block;
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-top: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: var(--mid);
+    color: var(--navy);
+  }
+
+  .timeline-tag.lesson-tag { background: #FFF0ED; color: #B33D26; }
+  .timeline-tag.active-tag { background: rgba(255,91,65,0.12); color: var(--orange); }
+
+  .lesson-box {
+    background: #FFF8F6;
+    border: 1px solid #FFD5CD;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-top: 12px;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: #8B3A28;
+    line-height: 1.5;
+  }
+
+  .lesson-box strong { font-weight: 700; }
+
+  .insight-box {
+    background: var(--teal-lt);
+    border-left: 3px solid var(--teal);
+    border-radius: 0 6px 6px 0;
+    padding: 10px 14px;
+    margin-top: 12px;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: var(--teal);
+    line-height: 1.5;
+  }
+
+  .insight-box strong { font-weight: 700; }
+
+  /* ── INPUTS TABLE ─────────────────────────────────────── */
+  .inputs-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+    background: var(--white);
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .inputs-table th {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 12px 18px;
+    text-align: left;
+    background: var(--mid);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .inputs-table td {
+    font-size: 13px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+
+  .inputs-table tr:last-child td { border-bottom: none; }
+  .inputs-table tr:hover td { background: var(--sand); }
+
+  .input-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .badge-mensual   { background: var(--mid);   color: var(--navy); }
+  .badge-semanal   { background: #E6F1FB;       color: #185FA5; }
+  .badge-unico     { background: var(--teal-lt); color: var(--teal); }
+  .badge-referencia { background: #FFF0ED; color: #B33D26; }
+
+  /* ── DASHBOARD EMBED ─────────────────────────────────── */
+  .dashboard-wrap {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,53,148,0.08);
+    margin-top: 8px;
+  }
+
+  .dashboard-bar {
+    background: var(--navy);
+    padding: 10px 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .db-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+  }
+
+  .dashboard-bar span {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    margin-left: 8px;
+    letter-spacing: 0.5px;
+  }
+
+  .dashboard-status {
+    margin-left: auto;
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: rgba(255,91,65,0.2);
+    color: var(--orange);
+  }
+
+  .dashboard-iframe {
+    width: 100%;
+    height: 640px;
+    border: none;
+    display: block;
+    background: #F4F6FA;
+  }
+
+  .status-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .status-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+  }
+
+  .status-card-title {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .dot-green  { width: 8px; height: 8px; border-radius: 50%; background: #10B981; flex-shrink: 0; }
+  .dot-orange { width: 8px; height: 8px; border-radius: 50%; background: var(--orange); flex-shrink: 0; }
+  .dot-gray   { width: 8px; height: 8px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
+
+  .status-card-desc {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* ── HORIZONTE ────────────────────────────────────────── */
+  .horizonte-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+
+  .h-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px 24px;
+    border-top: 3px solid var(--navy);
+  }
+
+  .h-card.orange-top { border-top-color: var(--orange); }
+
+  .h-card-eyebrow {
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .h-card-title {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+
+  .h-card-items {
+    list-style: none;
+    margin-top: 8px;
+  }
+
+  .h-card-items li {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: var(--muted);
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border);
+    padding-left: 14px;
+    position: relative;
+    line-height: 1.4;
+  }
+
+  .h-card-items li:last-child { border-bottom: none; }
+
+  .h-card-items li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--orange);
+    font-size: 10px;
+  }
+
+  .h-card-source {
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--teal);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── CALLOUT ─────────────────────────────────────────── */
+  .callout {
+    background: var(--navy);
+    color: var(--white);
+    border-radius: 10px;
+    padding: 32px 36px;
+    margin-top: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .callout::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 5px; height: 100%;
+    background: var(--orange);
+  }
+
+  .callout-text {
+    font-size: 18px;
+    font-style: italic;
+    color: rgba(255,255,255,0.9);
+    line-height: 1.5;
+    padding-left: 16px;
+  }
+
+  .callout-source {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 12px;
+    padding-left: 16px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── KPI ROW ─────────────────────────────────────────── */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+
+  .kpi-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .kpi-num {
+    font-size: 32px;
+    font-weight: 400;
+    color: var(--orange);
+    line-height: 1;
+  }
+
+  .kpi-label {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 6px;
+    line-height: 1.4;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  /* ── FOOTER ─────────────────────────────────────────── */
+  .footer {
+    background: var(--navy-dk);
+    color: rgba(255,255,255,0.4);
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 40px;
+  }
+
+  /* ── ANIMATIONS ─────────────────────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-up { opacity: 0; animation: fadeUp 0.6s ease forwards; }
+  .fade-up-1 { animation-delay: 0.1s; }
+  .fade-up-2 { animation-delay: 0.25s; }
+  .fade-up-3 { animation-delay: 0.4s; }
+  .fade-up-4 { animation-delay: 0.55s; }
+
+  /* ── RESPONSIVE ─────────────────────────────────────── */
+  @media (max-width: 860px) {
+    .layout { grid-template-columns: 1fr; }
+    .nav { display: none; }
+    .content { padding: 40px 24px; }
+    .pain-grid, .kpi-row, .horizonte-grid { grid-template-columns: 1fr; }
+    .status-row { grid-template-columns: 1fr; }
+    .cover-inner { padding: 40px 24px; }
+    .cover-stats { flex-direction: column; gap: 24px; }
+    .cover-stat { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; }
+    .inputs-table th:nth-child(3), .inputs-table td:nth-child(3) { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ COVER ═══════════════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-grid"></div>
+  <div class="cover-accent"></div>
+  <div class="cover-inner">
+    <div class="cover-top">
+      <div class="cover-eyebrow">Case Study 06 · Dashboard Real Estate</div>
+      <div class="cover-logo">Davante Real Estate</div>
+    </div>
+
+    <div class="cover-main">
+      <div class="cover-num">06</div>
+      <h1 class="cover-title fade-up fade-up-1">
+        Del Excel al dashboard<br><em>en 4 días</em>
+      </h1>
+      <p class="cover-subtitle fade-up fade-up-2">
+        Reporting de Real Estate con IA · Método exploratorio · En curso · Abril 2026
+      </p>
+
+      <div class="cover-stats fade-up fade-up-3">
+        <div class="cover-stat">
+          <div class="cover-stat-num">4</div>
+          <div class="cover-stat-label">Días desde el<br>arranque</div>
+        </div>
+        <div class="cover-stat">
+          <div class="cover-stat-num">4</div>
+          <div class="cover-stat-label">Inputs integrados<br>sin servidor</div>
+        </div>
+        <div class="cover-stat">
+          <div class="cover-stat-num">Días→Min</div>
+          <div class="cover-stat-label">Tiempo de producción<br>del reporte</div>
+        </div>
+        <div class="cover-stat">
+          <div class="cover-stat-num">0€</div>
+          <div class="cover-stat-label">Coste de infraestructura<br>adicional</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cover-bottom fade-up fade-up-4">
+      Davante Real Estate · IA Cases Studies 2026 · Privado y confidencial
+    </div>
+  </div>
+</div>
+
+<!-- ═══ BODY ═════════════════════════════════════════════════════════ -->
+<div class="layout">
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-label">Contenido</div>
+    <a class="nav-item active" href="#seccion-1" onclick="setActive(this)">
+      <span class="nav-dot"></span>
+      El punto de partida
+      <span class="nav-num">01</span>
+    </a>
+    <a class="nav-item" href="#seccion-2" onclick="setActive(this)">
+      <span class="nav-dot"></span>
+      Cómo se hizo
+      <span class="nav-num">02</span>
+    </a>
+    <a class="nav-item" href="#seccion-3" onclick="setActive(this)">
+      <span class="nav-dot"></span>
+      Los 4 inputs
+      <span class="nav-num">03</span>
+    </a>
+    <a class="nav-item" href="#seccion-4" onclick="setActive(this)">
+      <span class="nav-dot"></span>
+      El dashboard
+      <span class="nav-num">04</span>
+    </a>
+    <a class="nav-item" href="#seccion-5" onclick="setActive(this)">
+      <span class="nav-dot"></span>
+      El horizonte
+      <span class="nav-num">05</span>
+    </a>
+  </nav>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <!-- ── SECCIÓN 1: EL PUNTO DE PARTIDA ─────────────────────── -->
+    <section class="section" id="seccion-1">
+      <div class="section-eyebrow">01 · El punto de partida</div>
+      <h2 class="section-title">Un departamento que priorizó<br>ejecutar sobre reportar</h2>
+      <p class="section-sub">
+        El departamento de Real Estate gestionaba 137 centros, obras en curso e incidencias semanales con una
+        prioridad clara: resolver problemas, no documentarlos. El reporting era casi inexistente — y lo que había
+        requería varios días de trabajo técnico para producirse. El año pasado se intentó crear un reporting integrado
+        y se descartó: los técnicos tienen otras prioridades.
+      </p>
+
+      <div class="pain-grid">
+        <div class="pain-card critical">
+          <div class="pain-card-title">Sin reporting integrado</div>
+          <div class="pain-card-desc">El único reporte existente era un Excel "feo" entregado mensualmente a los directores de operaciones. Sin integración, sin histórico, sin drill-down.</div>
+          <span class="pain-tag tag-critical">Crítico</span>
+        </div>
+        <div class="pain-card critical">
+          <div class="pain-card-title">Coste de producción inasumible</div>
+          <div class="pain-card-desc">Cuando se intentó construir un dashboard integrado el año pasado, llevó varios días de trabajo técnico. Inviable con el volumen de tareas del departamento.</div>
+          <span class="pain-tag tag-critical">Crítico</span>
+        </div>
+        <div class="pain-card high">
+          <div class="pain-card-title">Datos fragmentados por fuente</div>
+          <div class="pain-card-desc">Obras en un Excel mensual. Incidencias en otro Excel semanal con una pestaña por semana. Licencias aparte. Sin ningún punto de integración.</div>
+          <span class="pain-tag tag-high">Alto</span>
+        </div>
+        <div class="pain-card high">
+          <div class="pain-card-title">Formato pensado para el técnico,<br>no para la dirección</div>
+          <div class="pain-card-desc">Los listados eran operativos, no ejecutivos. No había ninguna vista agregada, comparativa ni evolutiva para tomar decisiones estratégicas.</div>
+          <span class="pain-tag tag-high">Alto</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <p style="font-family:Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;">Lo que lo hizo posible en 2026</p>
+
+      <div class="callout">
+        <p class="callout-text">
+          "Del año pasado a este, hemos introducido gran parte de la información en ClickUp. Eso nos da datos
+          sistemáticos y extraíbles cuando queremos, y nos permite afrontar este tipo de reportes."
+        </p>
+        <p class="callout-source">Directora técnica · Departamento Real Estate · Abril 2026</p>
+      </div>
+    </section>
+
+    <!-- ── SECCIÓN 2: CÓMO SE HIZO ─────────────────────────────── -->
+    <section class="section" id="seccion-2">
+      <div class="section-eyebrow">02 · Cómo se hizo</div>
+      <h2 class="section-title">Un método exploratorio,<br>no sistemático</h2>
+      <p class="section-sub">
+        No hubo un plan previo. Hubo una necesidad concreta, una fecha de reporte y la decisión de empezar pequeño.
+        Cada paso surgió del anterior. El método puede cambiar — y probablemente lo hará.
+      </p>
+
+      <div class="timeline">
+
+        <div class="timeline-item lesson">
+          <div class="timeline-dot"></div>
+          <div class="timeline-date">Hace 22 días · Primer intento</div>
+          <div class="timeline-card">
+            <div class="timeline-card-title">El PPTX que no convencía</div>
+            <div class="timeline-card-desc">
+              Con los Excels de obras, el maestro de superficies y las guías de diseño de Davante, se generó
+              un primer borrador de presentación PowerPoint de "trabajos de RE". El resultado fue funcional
+              pero no satisfactorio: prompts poco precisos, contexto insuficiente, output genérico.
+            </div>
+            <span class="timeline-tag lesson-tag">Lección aprendida</span>
+            <div class="lesson-box">
+              <strong>Aprendizaje:</strong> La IA necesita contexto de negocio, no solo datos. Sin explicar qué
+              queremos ver y para quién, el output es correcto pero inútil.
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item done">
+          <div class="timeline-dot"></div>
+          <div class="timeline-date">Lunes 6 de abril · Día de reporte mensual de obras</div>
+          <div class="timeline-card">
+            <div class="timeline-card-title">Empezar pequeño: solo obras</div>
+            <div class="timeline-card-desc">
+              En lugar de intentar integrarlo todo, se decidió arrancar solo con el reporte de obras. Se mejoró
+              el prompt y el contexto. Se pidieron opciones de formato y surgió la posibilidad de generar un
+              HTML dinámico en lugar de un PowerPoint estático. El resultado fue significativamente mejor.
+              Punto de inflexión: el HTML interactivo como formato de reporte.
+            </div>
+            <span class="timeline-tag">Obras · HTML</span>
+            <div class="insight-box">
+              <strong>Descubrimiento clave:</strong> Un HTML dinámico con filtros y drill-down aporta más valor
+              que un PowerPoint estático. Y se genera en minutos, no en días.
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item done">
+          <div class="timeline-dot"></div>
+          <div class="timeline-date">Días siguientes · Reporte semanal de incidencias</div>
+          <div class="timeline-card">
+            <div class="timeline-card-title">La misma filosofía con incidencias</div>
+            <div class="timeline-card-desc">
+              Se probó el mismo enfoque con el Excel de incidencias semanales — un archivo con una pestaña por
+              semana. Se ajustaron las vistas del dashboard directamente en HTML. Se incorporó la comparación
+              respecto al cierre de mes como referencia estándar para medir evolución.
+            </div>
+            <span class="timeline-tag">Incidencias · Variaciones vs. cierre de mes</span>
+          </div>
+        </div>
+
+        <div class="timeline-item active">
+          <div class="timeline-dot"></div>
+          <div class="timeline-date">Hoy · Estado actual</div>
+          <div class="timeline-card">
+            <div class="timeline-card-title">Dashboard completo de departamento · En prueba</div>
+            <div class="timeline-card-desc">
+              Se integró el dashboard completo: obras, incidencias, licencias, con hueco reservado para
+              arrendamientos y suministros (pendientes de datos). El dashboard no se ha distribuido aún al
+              director de operaciones — está en fase de validación de contenido y vistas.
+            </div>
+            <span class="timeline-tag active-tag">En prueba · 4 días</span>
+            <div class="insight-box">
+              <strong>Próximo paso:</strong> Definir qué queremos ver exactamente, y enriquecer con datos
+              de otros departamentos (m² por tipo, alumnos, titulaciones).
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── SECCIÓN 3: LOS 4 INPUTS ────────────────────────────── -->
+    <section class="section" id="seccion-3">
+      <div class="section-eyebrow">03 · Los inputs</div>
+      <h2 class="section-title">4 fuentes, sin acceso<br>a ningún servidor</h2>
+      <p class="section-sub">
+        Todo el trabajo se hizo con archivos facilitados manualmente. Sin integración técnica,
+        sin permisos especiales, sin riesgo de seguridad. La IA procesó los datos; el equipo aportó
+        el criterio sobre qué mostrar.
+      </p>
+
+      <table class="inputs-table">
+        <thead>
+          <tr>
+            <th>Input</th>
+            <th>Formato y origen</th>
+            <th>Frecuencia</th>
+            <th>Rol en el dashboard</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Listado de obras</strong></td>
+            <td>Excel · Export desde ClickUp</td>
+            <td><span class="input-badge badge-mensual">Mensual</span></td>
+            <td>Sección Obras: estado, coste, evolución por centro</td>
+          </tr>
+          <tr>
+            <td><strong>Listado de incidencias</strong></td>
+            <td>Excel · Una pestaña por semana</td>
+            <td><span class="input-badge badge-semanal">Semanal</span></td>
+            <td>Sección Mantenimiento: volumen, estado, variación vs. cierre de mes</td>
+          </tr>
+          <tr>
+            <td><strong>Maestro de superficies</strong></td>
+            <td>Documento · Facilitado por el departamento</td>
+            <td><span class="input-badge badge-unico">Estable</span></td>
+            <td>Base para ratios por m² · Cruces futuros con otros datos</td>
+          </tr>
+          <tr>
+            <td><strong>Guías de diseño Davante</strong></td>
+            <td>PDF · Branding corporativo</td>
+            <td><span class="input-badge badge-referencia">Referencia</span></td>
+            <td>Paleta de color, tipografía y estilo visual del dashboard</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top:24px;">
+        <div class="kpi-row">
+          <div class="kpi-card">
+            <div class="kpi-num">137</div>
+            <div class="kpi-label">Centros en cartera</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-num">48</div>
+            <div class="kpi-label">Obras en seguimiento</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-num">705</div>
+            <div class="kpi-label">Incidencias registradas</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-num">79</div>
+            <div class="kpi-label">CEE pendientes</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECCIÓN 4: EL DASHBOARD ─────────────────────────────── -->
+    <section class="section" id="seccion-4">
+      <div class="section-eyebrow">04 · El resultado</div>
+      <h2 class="section-title">Dashboard integral · En prueba</h2>
+      <p class="section-sub">
+        Un dashboard HTML interactivo con 6 secciones, filtros, búsqueda y drill-down por centro.
+        Accesible desde cualquier navegador, sin instalar nada, sin Office. Generado a partir de un export
+        de ClickUp y dos Excels. Aún no distribuido: está en fase de validación de contenido.
+      </p>
+
+      <div class="dashboard-wrap">
+        <div class="dashboard-bar">
+          <div class="db-dot" style="background:#FF5F57;"></div>
+          <div class="db-dot" style="background:#FFBD2E;"></div>
+          <div class="db-dot" style="background:#28C840;"></div>
+          <span>dashboard-real-estate.davante.es</span>
+          <div class="dashboard-status">En prueba</div>
+        </div>
+        <iframe
+          src="Dashboard_Integral_RE.html"
+          class="dashboard-iframe"
+          title="Dashboard Integral Real Estate – Davante"
+          loading="lazy">
+        </iframe>
+      </div>
+
+      <div class="status-row">
+        <div class="status-card">
+          <div class="status-card-title"><span class="dot-green"></span>Funcionando</div>
+          <div class="status-card-desc">Obras · Incidencias · Cartera · Licencias. Datos reales del departamento, actualización manual desde export.</div>
+        </div>
+        <div class="status-card">
+          <div class="status-card-title"><span class="dot-orange"></span>En definición</div>
+          <div class="status-card-desc">Contenido exacto de cada vista. Qué KPIs mostrar, en qué orden, con qué granularidad. Pendiente de validar con el equipo.</div>
+        </div>
+        <div class="status-card">
+          <div class="status-card-title"><span class="dot-gray"></span>Pendiente de datos</div>
+          <div class="status-card-desc">Arrendamientos · Suministros. El hueco ya está reservado. Los datos dependen de otras fuentes del departamento.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECCIÓN 5: EL HORIZONTE ─────────────────────────────── -->
+    <section class="section" id="seccion-5">
+      <div class="section-eyebrow">05 · El horizonte</div>
+      <h2 class="section-title">RE + Académico = inteligencia<br>estratégica del patrimonio</h2>
+      <p class="section-sub">
+        El dashboard actual ya es útil. Pero su potencial real aparece cuando los datos de Real Estate
+        se cruzan con datos de otros departamentos. Esto no está hecho — es la siguiente fase.
+      </p>
+
+      <div class="horizonte-grid">
+        <div class="h-card">
+          <div class="h-card-eyebrow">Datos disponibles hoy</div>
+          <div class="h-card-title">Superficie útil por centro</div>
+          <ul class="h-card-items">
+            <li>m² totales por centro</li>
+            <li>Desglose por tipo de uso: educativa, servicios generales, espacios comunes</li>
+            <li>Base para calcular ratios por m²</li>
+          </ul>
+          <div class="h-card-source">Fuente: Departamento RE · Maestro de superficies</div>
+        </div>
+
+        <div class="h-card">
+          <div class="h-card-eyebrow">Pendiente de otros departamentos</div>
+          <div class="h-card-title">Alumnos y titulaciones</div>
+          <ul class="h-card-items">
+            <li>Número de alumnos por centro</li>
+            <li>Titulaciones y rama formativa</li>
+            <li>Demanda real de espacio por tipo de enseñanza</li>
+          </ul>
+          <div class="h-card-source">Fuente: Departamento Académico</div>
+        </div>
+
+        <div class="h-card orange-top">
+          <div class="h-card-eyebrow">Análisis que se activará</div>
+          <div class="h-card-title">Regulación por CCAA</div>
+          <ul class="h-card-items">
+            <li>Algunas CCAA exigen más m² para espacios comunes</li>
+            <li>Contraste centro a centro por comunidad autónoma</li>
+            <li>Detección de centros en riesgo de incumplimiento</li>
+          </ul>
+          <div class="h-card-source">Fuente: Marco normativo autonómico</div>
+        </div>
+      </div>
+
+      <p style="font-family:Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;margin-top:8px;">KPIs que se desbloquean con el cruce</p>
+
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <div class="kpi-num" style="font-size:22px;">Coste / m²</div>
+          <div class="kpi-label">Comparar eficiencia entre intervenciones</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-num" style="font-size:22px;">Incid. / m²</div>
+          <div class="kpi-label">Detectar centros con degradación acelerada</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-num" style="font-size:22px;">Alumnos / m²</div>
+          <div class="kpi-label">Centros sobredimensionados o saturados</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-num" style="font-size:22px;">Incid. / alumno</div>
+          <div class="kpi-label">Evaluar el desgaste relativo al volumen</div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <p class="callout-text">
+          "Hemos arrancado hace 4 días. En una semana tenemos un prototipo funcional que el año pasado
+          habría costado varios días de trabajo técnico — y se habría descartado. El método es exploratorio
+          y seguirá siéndolo. Lo importante es que ya funciona."
+        </p>
+        <p class="callout-source">Directora técnica · Departamento Real Estate · Abril 2026</p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span>Davante Real Estate · IA Cases Studies 2026 · CONFIDENCIAL</span>
+  <span>Abril 2026</span>
+</div>
+
+<script>
+  function setActive(el) {
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  // Auto-highlight nav on scroll
+  const sections = document.querySelectorAll('.section');
+  const navItems = document.querySelectorAll('.nav-item');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        navItems.forEach(item => {
+          item.classList.toggle('active', item.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
