@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Integral Real Estate — Davante</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --navy: #003594;
+  --navy-dark: #002266;
+  --navy-light: #0050c8;
+  --orange: #FF5B41;
+  --orange-light: #FF7A63;
+  --white: #FFFFFF;
+  --bg: #F4F6FA;
+  --card: #FFFFFF;
+  --text: #1A1D29;
+  --text-mid: #4A5068;
+  --text-light: #8891A5;
+  --border: #E2E6EF;
+  --green: #10B981;
+  --green-light: #D1FAE5;
+  --red: #EF4444;
+  --red-light: #FEE2E2;
+  --amber: #F59E0B;
+  --amber-light: #FEF3C7;
+  --blue-light: #DBEAFE;
+  --purple: #8B5CF6;
+  --purple-light: #EDE9FE;
+  --radius: 14px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.04);
+  --shadow-lg: 0 4px 20px rgba(0,0,0,.08);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Manrope',system-ui,sans-serif; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; }
+
+/* ── HEADER ── */
+.header { background:var(--navy); color:var(--white); padding:24px 32px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
+.header-left { display:flex; align-items:center; gap:16px; }
+.logo-symbol { width:36px; height:36px; background:var(--white); border-radius:8px; display:flex; align-items:center; justify-content:center; }
+.logo-symbol svg { width:22px; height:22px; }
+.header h1 { font-size:18px; font-weight:700; letter-spacing:-.3px; }
+.header .subtitle { font-size:12px; opacity:.65; font-weight:400; margin-top:2px; }
+.header-right { font-size:12px; opacity:.6; text-align:right; }
+
+/* ── NAV ── */
+.nav-bar { background:var(--white); border-bottom:1px solid var(--border); padding:0 32px; display:flex; gap:0; overflow-x:auto; position:sticky; top:72px; z-index:99; }
+.nav-btn { padding:14px 20px; font-size:13px; font-weight:600; color:var(--text-mid); cursor:pointer; border:none; background:none; border-bottom:3px solid transparent; transition:all .2s; white-space:nowrap; font-family:inherit; }
+.nav-btn:hover { color:var(--navy); background:var(--bg); }
+.nav-btn.active { color:var(--navy); border-bottom-color:var(--orange); }
+.nav-btn.placeholder { color:var(--text-light); font-style:italic; }
+
+/* ── MAIN ── */
+.main { padding:24px 32px 64px; max-width:1440px; margin:0 auto; }
+
+/* ── SECTION ── */
+.section { display:none; animation:fadeIn .3s ease; }
+.section.active { display:block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+
+.section-title { font-size:22px; font-weight:800; color:var(--navy); margin-bottom:4px; letter-spacing:-.4px; }
+.section-sub { font-size:13px; color:var(--text-light); margin-bottom:24px; }
+
+/* ── KPI CARDS ── */
+.kpi-row { display:grid; gap:16px; margin-bottom:24px; }
+.kpi-row.cols-4 { grid-template-columns:repeat(4,1fr); }
+.kpi-row.cols-3 { grid-template-columns:repeat(3,1fr); }
+.kpi-row.cols-5 { grid-template-columns:repeat(5,1fr); }
+.kpi-row.cols-6 { grid-template-columns:repeat(6,1fr); }
+
+.kpi { background:var(--card); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); border:1px solid var(--border); position:relative; overflow:hidden; }
+.kpi::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:var(--navy); border-radius:4px 0 0 4px; }
+.kpi.accent-orange::before { background:var(--orange); }
+.kpi.accent-green::before { background:var(--green); }
+.kpi.accent-red::before { background:var(--red); }
+.kpi.accent-amber::before { background:var(--amber); }
+.kpi.accent-purple::before { background:var(--purple); }
+.kpi .kpi-label { font-size:11px; font-weight:600; color:var(--text-light); text-transform:uppercase; letter-spacing:.5px; margin-bottom:8px; }
+.kpi .kpi-value { font-size:28px; font-weight:800; color:var(--navy); letter-spacing:-.5px; }
+.kpi .kpi-value.small { font-size:20px; }
+.kpi .kpi-detail { font-size:11px; color:var(--text-mid); margin-top:4px; }
+.kpi.highlight { background:var(--navy); }
+.kpi.highlight .kpi-label { color:rgba(255,255,255,.6); }
+.kpi.highlight .kpi-value { color:var(--white); }
+.kpi.highlight .kpi-detail { color:rgba(255,255,255,.5); }
+.kpi.highlight::before { background:var(--orange); }
+
+/* ── CARDS / PANELS ── */
+.panel { background:var(--card); border-radius:var(--radius); padding:24px; box-shadow:var(--shadow); border:1px solid var(--border); margin-bottom:20px; }
+.panel-title { font-size:14px; font-weight:700; color:var(--navy); margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+.panel-title .dot { width:8px; height:8px; border-radius:50%; background:var(--orange); }
+
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; }
+
+/* ── CHARTS ── */
+.chart-wrap { position:relative; height:280px; }
+.chart-wrap.short { height:200px; }
+.chart-wrap.tall { height:340px; }
+
+/* ── TABLES ── */
+.table-wrap { overflow-x:auto; max-height:500px; overflow-y:auto; }
+table { width:100%; border-collapse:collapse; font-size:12px; }
+th { background:var(--navy); color:var(--white); padding:10px 12px; text-align:left; font-weight:600; position:sticky; top:0; z-index:2; white-space:nowrap; }
+td { padding:9px 12px; border-bottom:1px solid var(--border); color:var(--text-mid); }
+tr:hover td { background:#F8F9FD; }
+td.num { text-align:right; font-variant-numeric:tabular-nums; }
+
+/* ── BADGES ── */
+.badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.3px; }
+.badge-green { background:var(--green-light); color:#065F46; }
+.badge-red { background:var(--red-light); color:#991B1B; }
+.badge-amber { background:var(--amber-light); color:#92400E; }
+.badge-blue { background:var(--blue-light); color:#1E40AF; }
+.badge-purple { background:var(--purple-light); color:#5B21B6; }
+.badge-gray { background:#F3F4F6; color:#6B7280; }
+
+/* ── MATRIX ── */
+.matrix { width:100%; border-collapse:collapse; font-size:12px; }
+.matrix th { background:var(--navy); color:white; padding:10px 14px; text-align:center; font-weight:600; }
+.matrix td { padding:12px 14px; text-align:center; border:1px solid var(--border); }
+.matrix td .cell-count { font-size:18px; font-weight:800; color:var(--navy); }
+.matrix td .cell-budget { font-size:10px; color:var(--text-light); margin-top:2px; }
+.matrix .row-label { text-align:left; font-weight:600; color:var(--text); background:#F8F9FD; }
+
+/* ── SEMAFORO ── */
+.sema { display:inline-block; width:22px; height:22px; border-radius:50%; line-height:22px; text-align:center; font-size:9px; font-weight:800; color:white; }
+.sema-ok { background:var(--green); }
+.sema-falta { background:var(--red); }
+.sema-na { background:#D1D5DB; color:#6B7280; }
+.sema-other { background:var(--amber); }
+
+/* ── PLACEHOLDER ── */
+.placeholder-box { background:linear-gradient(135deg, #F8F9FD 0%, #EEF0F7 100%); border:2px dashed var(--border); border-radius:var(--radius); padding:48px; text-align:center; color:var(--text-light); }
+.placeholder-box .ph-icon { font-size:48px; margin-bottom:12px; opacity:.4; }
+.placeholder-box h3 { font-size:16px; font-weight:700; color:var(--text-mid); margin-bottom:8px; }
+.placeholder-box p { font-size:13px; line-height:1.6; max-width:400px; margin:0 auto; }
+
+/* ── TABS ── */
+.tab-bar { display:flex; gap:0; margin-bottom:20px; border-bottom:2px solid var(--border); }
+.tab-btn { padding:10px 18px; font-size:12px; font-weight:600; color:var(--text-light); cursor:pointer; border:none; background:none; border-bottom:2px solid transparent; margin-bottom:-2px; transition:all .2s; font-family:inherit; }
+.tab-btn:hover { color:var(--navy); }
+.tab-btn.active { color:var(--navy); border-bottom-color:var(--orange); }
+.tab-content { display:none; animation:fadeIn .25s ease; }
+.tab-content.active { display:block; }
+
+/* ── RESPONSIVE ── */
+@media(max-width:1024px) {
+  .kpi-row.cols-4, .kpi-row.cols-5, .kpi-row.cols-6 { grid-template-columns:repeat(3,1fr); }
+  .grid-2, .grid-3 { grid-template-columns:1fr; }
+}
+@media(max-width:768px) {
+  .header { padding:16px 20px; }
+  .nav-bar { padding:0 16px; }
+  .main { padding:16px 20px 48px; }
+  .kpi-row.cols-4, .kpi-row.cols-3, .kpi-row.cols-5, .kpi-row.cols-6 { grid-template-columns:repeat(2,1fr); }
+  .kpi .kpi-value { font-size:22px; }
+}
+
+/* ── HOME GRID ── */
+.home-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:24px; }
+.home-card { background:var(--card); border-radius:var(--radius); padding:28px 24px; box-shadow:var(--shadow); border:1px solid var(--border); cursor:pointer; transition:all .25s; position:relative; overflow:hidden; }
+.home-card:hover { box-shadow:var(--shadow-lg); transform:translateY(-2px); border-color:var(--navy-light); }
+.home-card .hc-icon { font-size:28px; margin-bottom:12px; }
+.home-card .hc-title { font-size:15px; font-weight:700; color:var(--navy); margin-bottom:6px; }
+.home-card .hc-desc { font-size:12px; color:var(--text-light); line-height:1.5; margin-bottom:16px; }
+.home-card .hc-stats { display:flex; gap:16px; flex-wrap:wrap; }
+.home-card .hc-stat { }
+.home-card .hc-stat-val { font-size:20px; font-weight:800; color:var(--navy); }
+.home-card .hc-stat-lbl { font-size:10px; color:var(--text-light); text-transform:uppercase; letter-spacing:.3px; }
+.home-card.ph { opacity:.6; }
+.home-card.ph .hc-title::after { content:' (pendiente)'; font-weight:400; font-style:italic; color:var(--text-light); font-size:11px; }
+
+@media(max-width:900px) { .home-grid { grid-template-columns:repeat(2,1fr); } }
+@media(max-width:600px) { .home-grid { grid-template-columns:1fr; } }
+
+/* ── FILTER ── */
+.filter-bar { display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap; align-items:center; }
+.filter-bar select, .filter-bar input { font-family:inherit; font-size:12px; padding:7px 12px; border:1px solid var(--border); border-radius:8px; background:white; color:var(--text); }
+.filter-bar label { font-size:11px; font-weight:600; color:var(--text-light); text-transform:uppercase; letter-spacing:.3px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="logo-symbol">
+      <svg viewBox="0 0 40 40" fill="none"><path d="M8 12C8 8 11 5 15 5h6c8 0 14 6 14 14s-6 14-14 14h-6c-4 0-7-3-7-7V12z" fill="#003594"/><path d="M18 14l8 6-8 6V14z" fill="white"/></svg>
+    </div>
+    <div>
+      <h1>Real Estate — Dashboard Integral</h1>
+      <div class="subtitle">Grupo Davante · Departamento de Real Estate</div>
+    </div>
+  </div>
+  <div class="header-right">Datos a 01/03/2026<br>Generado abril 2026</div>
+</div>
+
+<!-- NAV -->
+<div class="nav-bar">
+  <button class="nav-btn active" onclick="showSection('home')">Inicio</button>
+  <button class="nav-btn" onclick="showSection('cartera')">Cartera de Centros</button>
+  <button class="nav-btn" onclick="showSection('obras')">Obras</button>
+  <button class="nav-btn" onclick="showSection('maint')">Mantenimiento</button>
+  <button class="nav-btn" onclick="showSection('licencias')">Licencias</button>
+  <button class="nav-btn placeholder" onclick="showSection('arrend')">Arrendamientos</button>
+  <button class="nav-btn placeholder" onclick="showSection('sumin')">Suministros</button>
+</div>
+
+<div class="main">
+
+<!-- ===================== HOME ===================== -->
+<div class="section active" id="sec-home">
+  <div class="section-title">Panel Ejecutivo</div>
+  <div class="section-sub">Visión integral del departamento de Real Estate</div>
+
+  <div class="kpi-row cols-6">
+    <div class="kpi highlight"><div class="kpi-label">Centros activos</div><div class="kpi-value">137</div><div class="kpi-detail">3 marcas · 17 CCAA</div></div>
+    <div class="kpi"><div class="kpi-label">Superficie útil</div><div class="kpi-value small">138.057 m²</div><div class="kpi-detail">118 centros con datos</div></div>
+    <div class="kpi accent-orange"><div class="kpi-label">Obras en progreso</div><div class="kpi-value">48</div><div class="kpi-detail">1,71 M€ presupuesto</div></div>
+    <div class="kpi accent-red"><div class="kpi-label">Incidencias MTO</div><div class="kpi-value">705</div><div class="kpi-detail">197 bloqueadas</div></div>
+    <div class="kpi accent-amber"><div class="kpi-label">CEE pendientes</div><div class="kpi-value">79</div><div class="kpi-detail">De 123 evaluados</div></div>
+    <div class="kpi accent-purple"><div class="kpi-label">Cobertura datos</div><div class="kpi-value small">78,6%</div><div class="kpi-detail">Media en sistemas</div></div>
+  </div>
+
+  <div class="home-grid">
+    <div class="home-card" onclick="showSection('cartera')">
+      <div class="hc-icon">🏢</div>
+      <div class="hc-title">Cartera de Centros</div>
+      <div class="hc-desc">Patrimonio inmobiliario, superficies y distribución geográfica</div>
+      <div class="hc-stats">
+        <div class="hc-stat"><div class="hc-stat-val">137</div><div class="hc-stat-lbl">Centros</div></div>
+        <div class="hc-stat"><div class="hc-stat-val">138K</div><div class="hc-stat-lbl">m² útiles</div></div>
+        <div class="hc-stat"><div class="hc-stat-val">17</div><div class="hc-stat-lbl">CCAA</div></div>
+      </div>
+    </div>
+    <div class="home-card" onclick="showSection('obras')">
+      <div class="hc-icon">🔨</div>
+      <div class="hc-title">Obras</div>
+      <div class="hc-desc">Obras mayores, traslados y obras menores en curso</div>
+      <div class="hc-stats">
+        <div class="hc-stat"><div class="hc-stat-val">48</div><div class="hc-stat-lbl">En progreso</div></div>
+        <div class="hc-stat"><div class="hc-stat-val">42</div><div class="hc-stat-lbl">Pendientes</div></div>
+        <div class="hc-stat"><div class="hc-stat-val">6,6M€</div><div class="hc-stat-lbl">Ppto total</div></div>
+      </div>
+    </div>
+    <div class="home-card" onclick="showSection('maint')">
+      <div class="hc-icon">🔧</div>
+      <div class="hc-title">Mantenimiento</div>
+      <div class="hc-desc">Correctivo (incidencias) y preventivo (calendario)</div>
+      <div class="hc-stats">
+        <div class="hc-stat"><div class="hc-stat-val">705</div><div class="hc-stat-lbl">Incidencias</div></div>
+        <div class="hc-stat"><div class="hc-stat-val">197</div><div class="hc-stat-lbl">Bloqueadas</div></div>
+        <div class="hc-stat"><div class="hc-stat-val">271</div><div class="hc-stat-lbl">Urgentes</div></div>
+      </div>
+    </div>
+    <div class="home-card" onclick="showSection('licencias')">
+      <div class="hc-icon">📋</div>
+      <div class="hc-title">Licencias y Legalizaciones</div>
+      <div class="hc-desc">Estado de cumplimiento normativo por centro</div>
+      <div class="hc-stats">
+        <div class="hc-stat"><div class="hc-stat-val">79</div><div class="hc-stat-lbl">CEE faltan</div></div>
+        <div class="hc-stat"><div class="hc-stat-val">19</div><div class="hc-stat-lbl">PCI faltan</div></div>
+        <div class="hc-stat"><div class="hc-stat-val">16</div><div class="hc-stat-lbl">Apert. faltan</div></div>
+      </div>
+    </div>
+    <div class="home-card ph" onclick="showSection('arrend')">
+      <div class="hc-icon">📑</div>
+      <div class="hc-title">Arrendamientos</div>
+      <div class="hc-desc">Contratos, vencimientos y renegociaciones</div>
+      <div class="hc-stats"><div class="hc-stat"><div class="hc-stat-val">—</div><div class="hc-stat-lbl">Datos pendientes</div></div></div>
+    </div>
+    <div class="home-card ph" onclick="showSection('sumin')">
+      <div class="hc-icon">⚡</div>
+      <div class="hc-title">Suministros</div>
+      <div class="hc-desc">Consumo energético, costes y eficiencia</div>
+      <div class="hc-stats"><div class="hc-stat"><div class="hc-stat-val">—</div><div class="hc-stat-lbl">Datos pendientes</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== CARTERA ===================== -->
+<div class="section" id="sec-cartera">
+  <div class="section-title">Cartera de Centros</div>
+  <div class="section-sub">Patrimonio inmobiliario · 137 centros activos · 138.057 m² útiles</div>
+
+  <div class="kpi-row cols-5">
+    <div class="kpi highlight"><div class="kpi-label">Total centros</div><div class="kpi-value">137</div><div class="kpi-detail">3 marcas</div></div>
+    <div class="kpi"><div class="kpi-label">MasterD</div><div class="kpi-value">67</div><div class="kpi-detail">17.231 m²</div></div>
+    <div class="kpi accent-orange"><div class="kpi-label">Medac</div><div class="kpi-value">53</div><div class="kpi-detail">95.375 m²</div></div>
+    <div class="kpi accent-green"><div class="kpi-label">Fundación</div><div class="kpi-value">17</div><div class="kpi-detail">12.747 m²</div></div>
+    <div class="kpi accent-purple"><div class="kpi-label">Cobertura media</div><div class="kpi-value small">78,6%</div><div class="kpi-detail">En sistemas fuente</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="panel">
+      <div class="panel-title"><span class="dot"></span>Superficie por Comunidad Autónoma</div>
+      <div class="chart-wrap tall"><canvas id="chartCCaa"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title"><span class="dot"></span>Cobertura por Sistema Fuente</div>
+      <div class="chart-wrap tall"><canvas id="chartCobertura"></canvas></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><span class="dot"></span>Distribución por Marca</div>
+    <div class="chart-wrap short"><canvas id="chartMarcas"></canvas></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><span class="dot"></span>Detalle de Centros con Superficie</div>
+    <div class="filter-bar">
+      <label>Filtrar marca:</label>
+      <select id="filterMarca" onchange="renderSupTable()">
+        <option value="">Todas</option><option>Medac</option><option>MasterD</option><option>Fundación</option><option>IFP</option><option>ITP</option><option>RLL</option>
+      </select>
+      <label>CCAA:</label>
+      <select id="filterCCAA" onchange="renderSupTable()"><option value="">Todas</option></select>
+    </div>
+    <div class="table-wrap" id="supTableWrap"></div>
+  </div>
+</div>
+
+<!-- ===================== OBRAS ===================== -->
+<div class="section" id="sec-obras">
+  <div class="section-title">Obras</div>
+  <div class="section-sub">Estado de obras a 01/03/2026 · 119 obras registradas</div>
+
+  <div class="kpi-row cols-4">
+    <div class="kpi accent-orange"><div class="kpi-label">En progreso</div><div class="kpi-value">48</div><div class="kpi-detail">1,71 M€ presupuesto</div></div>
+    <div class="kpi accent-amber"><div class="kpi-label">Pendientes</div><div class="kpi-value">42</div><div class="kpi-detail">En espera de inicio</div></div>
+    <div class="kpi accent-green"><div class="kpi-label">Terminadas</div><div class="kpi-value">25</div><div class="kpi-detail">Finalizadas</div></div>
+    <div class="kpi highlight"><div class="kpi-label">Presupuesto total</div><div class="kpi-value small">6,61 M€</div><div class="kpi-detail">Todas las obras</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="panel">
+      <div class="panel-title"><span class="dot"></span>Distribución por Estado</div>
+      <div class="chart-wrap"><canvas id="chartObrasStatus"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title"><span class="dot"></span>Presupuesto por Tipo de Obra</div>
+      <div class="chart-wrap"><canvas id="chartObrasTipo"></canvas></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><span class="dot"></span>Matriz Estado × Tipo — Obras EN PROGRESO</div>
+    <div id="matrixWrap"></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><span class="dot"></span>Detalle Obras EN PROGRESO</div>
+    <div class="filter-bar">
+      <label>Tipo:</label>
+      <select id="filterObraTipo" onchange="renderObrasTable()"><option value="">Todos</option><option>Obra Mayor</option><option>Traslado</option><option>Obra Menor</option></select>
+      <label>Estado:</label>
+      <select id="filterObraEstado" onchange="renderObrasTable()"><option value="">Todos</option></select>
+    </div>
+    <div class="table-wrap" id="obrasTableWrap"></div>
+  </div>
+</div>
+
+<!-- ===================== MANTENIMIENTO ===================== -->
+<div class="section" id="sec-maint">
+  <div class="section-title">Mantenimiento</div>
+  <div class="section-sub">Incidencias correctivas · Datos a semana 260313</div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="showTab('maint','correctivo')">Correctivo</button>
+    <button class="tab-btn" onclick="showTab('maint','preventivo')">Preventivo</button>
+  </div>
+
+  <div class="tab-content active" id="tab-maint-correctivo">
+    <div class="kpi-row cols-5">
+      <div class="kpi highlight"><div class="kpi-label">Total incidencias</div><div class="kpi-value">705</div><div class="kpi-detail">6 responsables</div></div>
+      <div class="kpi accent-red"><div class="kpi-label">Bloqueadas</div><div class="kpi-value">197</div><div class="kpi-detail">28% del total</div></div>
+      <div class="kpi accent-amber"><div class="kpi-label">Pendientes</div><div class="kpi-value">164</div><div class="kpi-detail">23% del total</div></div>
+      <div class="kpi accent-orange"><div class="kpi-label">En progreso</div><div class="kpi-value">117</div><div class="kpi-detail">17% del total</div></div>
+      <div class="kpi accent-green"><div class="kpi-label">Terminadas</div><div class="kpi-value">219</div><div class="kpi-detail">31% del total</div></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-title"><span class="dot"></span>Estado de Incidencias</div>
+        <div class="chart-wrap"><canvas id="chartMaintStatus"></canvas></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title"><span class="dot"></span>Prioridad de Incidencias</div>
+        <div class="chart-wrap"><canvas id="chartMaintPrio"></canvas></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title"><span class="dot"></span>Incidencias por Director / Responsable</div>
+      <div class="chart-wrap tall"><canvas id="chartMaintDir"></canvas></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title"><span class="dot"></span>Detalle por Responsable</div>
+      <div class="table-wrap" id="maintTableWrap"></div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-maint-preventivo">
+    <div class="placeholder-box">
+      <div class="ph-icon">🔧</div>
+      <h3>Mantenimiento Preventivo</h3>
+      <p>Esta sección mostrará el calendario de revisiones programadas, tasas de cumplimiento por centro/equipo, y alertas de vencimiento. Pendiente de volcado de datos.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== LICENCIAS ===================== -->
+<div class="section" id="sec-licencias">
+  <div class="section-title">Licencias y Legalizaciones</div>
+  <div class="section-sub">Estado de cumplimiento normativo por centro</div>
+
+  <div class="kpi-row cols-4">
+    <div class="kpi accent-green"><div class="kpi-label">Lic. Obra OK</div><div class="kpi-value">91</div><div class="kpi-detail">7 faltan</div></div>
+    <div class="kpi accent-green"><div class="kpi-label">Lic. Apertura OK</div><div class="kpi-value">91</div><div class="kpi-detail">16 faltan</div></div>
+    <div class="kpi accent-red"><div class="kpi-label">CEE Pendientes</div><div class="kpi-value">79</div><div class="kpi-detail">34 OK · 10 N/A</div></div>
+    <div class="kpi accent-red"><div class="kpi-label">PCI Pendientes</div><div class="kpi-value">19</div><div class="kpi-detail">7 sin instalación</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="panel">
+      <div class="panel-title"><span class="dot"></span>Semáforo por Tipo de Licencia</div>
+      <div class="chart-wrap tall"><canvas id="chartLicStatus"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title"><span class="dot"></span>Evolución Seguimiento Semanal</div>
+      <div class="chart-wrap"><canvas id="chartLicSeg"></canvas></div>
+      <div style="font-size:11px;color:var(--text-light);margin-top:8px;">Centros con actividades de seguimiento activas por semana</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><span class="dot"></span>Detalle por Centro — Matriz de Cumplimiento</div>
+    <div class="filter-bar">
+      <label>Mostrar:</label>
+      <select id="filterLicEstado" onchange="renderLicTable()">
+        <option value="">Todos</option><option value="FALTA">Solo con FALTA</option><option value="OK">Solo OK</option>
+      </select>
+      <input type="text" id="filterLicSearch" placeholder="Buscar centro..." oninput="renderLicTable()">
+    </div>
+    <div class="table-wrap" id="licTableWrap"></div>
+  </div>
+</div>
+
+<!-- ===================== ARRENDAMIENTOS ===================== -->
+<div class="section" id="sec-arrend">
+  <div class="section-title">Arrendamientos</div>
+  <div class="section-sub">Contratos, vencimientos y renegociaciones</div>
+  <div class="placeholder-box">
+    <div class="ph-icon">📑</div>
+    <h3>Sección en preparación</h3>
+    <p>Esta sección mostrará: contratos vigentes con fechas de vencimiento, rentas por centro, pipeline de renegociaciones (Quick-Expansión), ahorros conseguidos vs. potenciales, y alertas de próximos vencimientos. Pendiente de volcado de datos de arrendamientos.</p>
+  </div>
+</div>
+
+<!-- ===================== SUMINISTROS ===================== -->
+<div class="section" id="sec-sumin">
+  <div class="section-title">Suministros y Eficiencia Energética</div>
+  <div class="section-sub">Consumo energético, costes y certificaciones</div>
+
+  <div class="kpi-row cols-3">
+    <div class="kpi accent-red"><div class="kpi-label">CEE pendientes</div><div class="kpi-value">79</div><div class="kpi-detail">De 123 centros evaluados</div></div>
+    <div class="kpi accent-amber"><div class="kpi-label">Auditoría energ.</div><div class="kpi-value">—</div><div class="kpi-detail">Datos pendientes</div></div>
+    <div class="kpi accent-purple"><div class="kpi-label">Cobertura suministros</div><div class="kpi-value small">83%</div><div class="kpi-detail">114 de 137 centros</div></div>
+  </div>
+
+  <div class="placeholder-box" style="margin-top:20px;">
+    <div class="ph-icon">⚡</div>
+    <h3>Datos de consumo en preparación</h3>
+    <p>Esta sección mostrará: evolución del coste energético por centro, comparativa de consumos (€/m²), análisis por comercializadora (Celmor), e instalaciones fotovoltaicas planificadas. Pendiente de volcado de datos de suministros eléctricos.</p>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+// ================================================================
+// DATA (embedded inline — no CDN dependencies)
+// ================================================================
+const DATA = {"obras": [{"c": "46012 MEDAC CAMPANAR", "k": "CF2203_MEDAC CAMPANAR VALENCIA  _Obra mayor", "d": "Javier Villaplana", "p": "Germán Arqueros Rodríguez", "s": "TERMINADO", "e": "Finalizada", "b": 2361789.13, "t": "Obra Mayor"}, {"c": "01010 MASTERD VITORIA", "k": "CF2404_MASTERD VITORIA_Obra mayor", "d": "Vladimir Carbonell", "p": "Germán Arqueros Rodríguez", "s": "TERMINADO", "e": "Finalizada", "b": 346569.98, "t": "Obra Mayor"}, {"c": "06010 MASTERD BADAJOZ", "k": "CF2405_MASTERD BADAJOZ_Obra mayor", "d": "Vladimir Carbonell", "p": "Germán Arqueros Rodríguez", "s": "TERMINADO", "e": "Finalizada", "b": 203204.43, "t": "Obra Mayor"}, {"c": "20012 MASTERD SAN SEBASTIÁN", "k": "CF2406_MASTERD SAN SEBASTIÁN_Obra mayor", "d": "Vladimir Carbonell", "p": "Germán Arqueros Rodríguez", "s": "TERMINADO", "e": "Finalizada", "b": 408525.04000000004, "t": "Obra Mayor"}, {"c": "08018 MASTERD BARCELONA TARRADELLAS", "k": "CF2408_MASTERD BARCELONA_JOSEP TARRADELLAS_Obra mayor", "d": "Vladimir Carbonell", "p": "Germán Arqueros Rodríguez", "s": "TERMINADO", "e": "Finalizada", "b": 930931.02, "t": "Obra Mayor"}, {"c": "47011 MASTERD VALLADOLID", "k": "CF2409_MASTERD VALLADOLID", "d": "Vladimir Carbonell", "p": "Germán Arqueros Rodríguez", "s": "TERMINADO", "e": "Finalizada", "b": 202007.02, "t": "Obra Mayor"}, {"c": "14010 MASTERD CÓRDOBA", "k": "CF2501_MASTERD CÓRDOBA", "d": "Vladimir Carbonell", "p": "Germán Arqueros Rodríguez", "s": "TERMINADO", "e": "Finalizada", "b": 138192.72999999998, "t": "Obra Mayor"}, {"c": "33013 FUNDACIÓN OVIEDO", "k": "MB26001_FUNDACIÓN OVIEDO_Mobiliario DIE", "d": "Sonia Ordoñez", "p": "Jaime Fuentes", "s": "TERMINADO", "e": "Finalizada", "b": 800.0, "t": "Mobiliario"}, {"c": "18013 MEDAC GRANADA-WE", "k": "OM25025_MASTERD GRANADA_Legalización instalación eléctrica", "d": "Vladimir Carbonell", "p": "Jaime Fuentes", "s": "TERMINADO", "e": "Finalizada", "b": 9070.57, "t": "Obra Menor"}, {"c": "08014 MEDAC ROGER DE LLURIA", "k": "OM25060_MEDAC ROGER DE LLURIA_Climatización", "d": "Javier Villaplana", "p": "Merian Suarez Iglesias, Jaime Fuentes", "s": "TERMINADO", "e": "Finalizada", "b": 70420.4, "t": "Obra Menor"}, {"c": "28017 MEDAC MENDÍVIL", "k": "OM25063_MEDAC MENDIVIL_Datos cableado red nueva", "d": "Vicente Panduro", "p": "Merian Suarez Iglesias, Jaime Fuentes", "s": "TERMINADO", "e": "Finalizada", "b": 51481.159999999996, "t": "Obra Menor"}, {"c": "28010 MASTERD MADRID ALONSO CANO", "k": "OM25070_MD ALONSO CANO_Renovación aulas técnicas", "d": "Vladimir Carbonell", "p": "Merian Suarez Iglesias, Jaime Fuentes", "s": "TERMINADO", "e": "Finalizada", "b": 49781.18, "t": "Obra Menor"}, {"c": "08017 MASTERD BARCELONA PLAÇA", "k": "OM25071_MD BARCELONA PZA CATALUÑA_Desimplantación", "d": "Vladimir Carbonell", "p": "Merian Suarez Iglesias, Jaime Fuentes", "s": "TERMINADO", "e": "Finalizada", "b": 9063.52, "t": "Obra Menor"}, {"c": "08018 MASTERD BARCELONA TARRADELLAS", "k": "OM25074_MD BARCELONA TARRADELLAS_Traslado mobiliario", "d": "Vladimir Carbonell", "p": "Merian Suarez Iglesias, Jaime Fuentes", "s": "TERMINADO", "e": "Finalizada", "b": 10768.0, "t": "Obra Menor"}, {"c": "29112 MEDAC CALL CENTER", "k": "OM25076_MEDAC CALL CENTER_Mobiliario orientación", "d": "Jesús Moral", "p": "Jaime Fuentes, Merian Suarez Iglesias", "s": "TERMINADO", "e": "Finalizada", "b": 1107.72, "t": "Obra Menor"}, {"c": "28018 MEDAC MÓSTOLES", "k": "OM25077_MEDAC MOSTOLES_Electrificación aula", "d": "Vicente Panduro", "p": "Merian Suarez Iglesias, Jaime Fuentes", "s": "TERMINADO", "e": "Finalizada", "b": 2606.0, "t": "Obra Menor"}, {"c": "08014 MEDAC ROGER DE LLURIA", "k": "OM25078_MEDAC ROGER DE LLURIA_Sustitución cristales claraboyas", "d": "Javier Villaplana", "p": "Merian Suarez Iglesias, Jaime Fuentes", "s": "TERMINADO", "e": "Finalizada", "b": 4215.4, "t": "Obra Menor"}, {"c": "28023 MEDAC FUENLABRADA", "k": "OM25079_MEDAC FUENLABRADA_Sustitución de bomba", "d": "Vicente Panduro", "p": "Merian Suarez Iglesias, Jaime Fuentes", "s": "TERMINADO", "e": "Finalizada", "b": 6856.31, "t": "Obra Menor"}, {"c": "21013 MEDAC AL-ÁNDALUS", "k": "OM25080_MEDAC HUELVA_Rampa acceso aparcamiento", "d": "Elías Cabrera", "p": "Merian Suarez Iglesias, Jaime Fuentes", "s": "TERMINADO", "e": "Finalizada", "b": 1510.0, "t": "Obra Menor"}, {"c": "28027 MASTERD MADRID VELÁZQUEZ", "k": "OM25083_EDUCA VELAZQUEZ 50_Mobiliario, datos y electrificación de puestos de trabajo", "d": "Vladimir Carbonell", "p": "Merian Suarez Iglesias, Jaime Fuentes", "s": "TERMINADO", "e": "Finalizada", "b": 20337.33, "t": "Obra Menor"}, {"c": "08013 MEDAC HOSPITALET", "k": "OM25092_MEDAC HOSPITALET_Electrificación mesas taller", "d": "Javier Villaplana", "p": "Merian Suarez Iglesias, Jaime Fuentes", "s": "TERMINADO", "e": "Finalizada", "b": 1500.0, "t": "Obra Menor"}, {"c": "21013 MEDAC AL-ÁNDALUS", "k": "OM25094_MEDAC HUELVA_Acondicionar zona deposito fecales", "d": "Elías Cabrera", "p": "Merian Suarez Iglesias, Jaime Fuentes", "s": "TERMINADO", "e": "Finalizada", "b": 2760.0, "t": "Obra Menor"}, {"c": "08013 MEDAC HOSPITALET", "k": "OM25097_MEDAC HOSPITALET_Pintura cornisa", "d": "Javier Villaplana", "p": "Jaime Fuentes, Merian Suarez Iglesias", "s": "TERMINADO", "e": "Finalizada", "b": 0, "t": "Obra Menor"}, {"c": "08018 MASTERD BARCELONA TARRADELLAS", "k": "OM26066_MASTERD TARRADELLAS_Pizarra y rótulo", "d": "Vladimir Carbonell", "p": "Merian Suarez Iglesias", "s": "TERMINADO", "e": "Finalizada", "b": 0, "t": "Obra Menor"}, {"c": "18011 FUNDACIÓN GRANADA", "k": "FUNDACIÓN GRANADA_Trabajos de instalación eléctrica y creación de tabique en planta superior", "d": "Sonia Ordoñez", "p": "Jaime Fuentes, Merian Suarez Iglesias", "s": "TERMINADO", "e": "", "b": 0, "t": "Otro"}, {"c": "28016 MEDAC VALLECAS", "k": "OM25088_MEDAC FRANCISCO IGLESIAS_Datos cableado red nueva", "d": "Vicente Panduro", "p": "Jaime Fuentes", "s": "DESCARTADOS", "e": "", "b": 63598.9, "t": "Obra Menor"}, {"c": "18011 FUNDACIÓN GRANADA", "k": "OM26006_FUNDACION GRANADA_Tabiquería y trabajos electricidad", "d": "Sonia Ordoñez", "p": "Jaime Fuentes", "s": "DESCARTADOS", "e": "", "b": 1910.99, "t": "Obra Menor"}, {"c": "50012 MEDAC FORMACCIONA", "k": "OM26018_MEDAC FORMACCIONA_Sacar puntos luz laboratorio", "d": "Vicente Panduro", "p": "Merian Suarez Iglesias", "s": "DESCARTADOS", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "23013 MEDAC AVENTURA", "k": "OM26019_MEDAC AVENTURA_Revisión arquetas", "d": "Elías Cabrera", "p": "Jaime Fuentes", "s": "DESCARTADOS", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "39010 MASTERD SANTANDER", "k": "OM25068_MASTERD SANTANDER_Reparaciones por filtraciones y roedores", "d": "Vladimir Carbonell", "p": "Merian Suarez Iglesias", "s": "EN PROGRESO", "e": "Finalizada", "b": 8303.08, "t": "Obra Menor"}, {"c": "08013 MEDAC HOSPITALET", "k": "OM25081_MEDAC HOSPITALET_Cambio escalera", "d": "Javier Villaplana", "p": "Merian Suarez Iglesias, Germán Arqueros Rodríguez", "s": "EN PROGRESO", "e": "Finalizada", "b": 35368.48, "t": "Obra Menor"}, {"c": "08018 MASTERD BARCELONA TARRADELLAS", "k": "OM25100_MEDAC BARCELONA TARRADELLAS_Instalación pantallas", "d": "Vladimir Carbonell", "p": "Merian Suarez Iglesias, Jaime Fuentes", "s": "EN PROGRESO", "e": "Finalizada", "b": 1723.0, "t": "Obra Menor"}, {"c": "28023 MEDAC FUENLABRADA", "k": "OM26010_MEDAC FUENLABRADA_Techo almacén bicis", "d": "Vicente Panduro", "p": "Merian Suarez Iglesias, Jaime Fuentes", "s": "EN PROGRESO", "e": "Finalizada", "b": 465.0, "t": "Obra Menor"}, {"c": "11012 MEDAC FLORES", "k": "CF2502_DAVANTE-MEDAC FLORES_Ampliación", "d": "Elías Cabrera", "p": "Germán Arqueros Rodríguez", "s": "EN PROGRESO", "e": "Obra en curso", "b": 775028.02, "t": "Obra Mayor"}, {"c": "46011 FUNDACIÓN VALENCIA", "k": "OM25024_FUNDACION VALENCIA_Contador agua", "d": "Sonia Ordoñez", "p": "Merian Suarez Iglesias", "s": "EN PROGRESO", "e": "Obra en curso", "b": 9914.76, "t": "Obra Menor"}, {"c": "41013 MEDAC SEVILLA ESTE", "k": "OM25051_MEDAC SEVILLA ESTE_Condensaciones Pabellón", "d": "Elías Cabrera", "p": "Francisco Javier Burgos", "s": "EN PROGRESO", "e": "Obra en curso", "b": 5000.0, "t": "Obra Menor"}, {"c": "48011 MASTERD BILBAO AUTONOMÍA", "k": "OM25061_MASTERD AUTONOMIA_Redes y Baja Tensión", "d": "Vladimir Carbonell", "p": "Merian Suarez Iglesias", "s": "EN PROGRESO", "e": "Obra en curso", "b": 23379.350000000002, "t": "Obra Menor"}, {"c": "11011 FUNDACIÓN JEREZ", "k": "OM25075_FUNDACION JEREZ_Instalación caja BT fachada", "d": "Sonia Ordoñez", "p": "Jaime Fuentes", "s": "EN PROGRESO", "e": "Obra en curso", "b": 2958.68, "t": "Obra Menor"}, {"c": "29016 MEDAC PACÍFICO", "k": "OM25086_MEDAC PACIFICO_Reparación por filtraciones", "d": "Jesús Moral", "p": "Jaime Fuentes", "s": "EN PROGRESO", "e": "Obra en curso", "b": 14126.28, "t": "Obra Menor"}, {"c": "08018 MASTERD BARCELONA TARRADELLAS", "k": "OM25095_MASTERD BARCELONA TARRADELLAS_Electrificacion mesas salas reunion y Studio Davante", "d": "Vladimir Carbonell", "p": "Merian Suarez Iglesias", "s": "EN PROGRESO", "e": "Obra en curso", "b": 2500.0, "t": "Obra Menor"}, {"c": "03013 MEDAC ALICANTE", "k": "OM25036_MEDAC ALICANTE_Recolocación conductos ventilación", "d": "Javier Villaplana", "p": "Francisco Javier Burgos", "s": "EN PROGRESO", "e": "Pendiente coordinar", "b": 20000.0, "t": "Obra Menor"}, {"c": "30011 FUNDACIÓN MURCIA", "k": "OM25045_FUNDACIÓN MURCIA_Pintura fachada rebranding", "d": "Sonia Ordoñez", "p": "Jaime Fuentes", "s": "EN PROGRESO", "e": "Pendiente coordinar", "b": 5499.89, "t": "Obra Menor"}, {"c": "02012 MEDAC ALBACETE", "k": "OM25047_MEDAC ALBACETE_Sustitución cubierta", "d": "Javier Villaplana", "p": "Germán Arqueros Rodríguez", "s": "EN PROGRESO", "e": "Pendiente coordinar", "b": 130044.8, "t": "Obra Menor"}, {"c": "28020 MEDAC ALBALÁ", "k": "OM25064_MEDAC ALBALA_Adecuación escalera", "d": "Vicente Panduro", "p": "Francisco Javier Burgos", "s": "EN PROGRESO", "e": "Pendiente coordinar", "b": 138000.0, "t": "Obra Menor"}, {"c": "14012 MEDAC ARENA", "k": "OM25067_MEDAC ARENA_Ascensor", "d": "Elías Cabrera", "p": "Jaime Fuentes", "s": "EN PROGRESO", "e": "Pendiente coordinar", "b": 17876.88, "t": "Obra Menor"}, {"c": "28024 MEDAC PINTO", "k": "OM25073_MEDAC PINTO_Filtraciones azotea", "d": "Vicente Panduro", "p": "Jaime Fuentes", "s": "EN PROGRESO", "e": "Pendiente coordinar", "b": 162159.1, "t": "Obra Menor"}, {"c": "23013 MEDAC AVENTURA", "k": "OM25082_MEDAC AVENTURA_Protecciones pilares", "d": "Elías Cabrera", "p": "Jaime Fuentes", "s": "EN PROGRESO", "e": "Pendiente coordinar", "b": 2656.0, "t": "Obra Menor"}, {"c": "41013 MEDAC SEVILLA ESTE", "k": "OM25087_MEDAC SEVILLA ESTE_Protección canastas", "d": "Elías Cabrera", "p": "Jaime Fuentes", "s": "EN PROGRESO", "e": "Pendiente coordinar", "b": 3248.0, "t": "Obra Menor"}, {"c": "28023 MEDAC FUENLABRADA", "k": "OM25091_MEDAC FUENLABRADA_Red contención balones", "d": "Vicente Panduro", "p": "Jaime Fuentes", "s": "EN PROGRESO", "e": "Pendiente coordinar", "b": 7761.96, "t": "Obra Menor"}, {"c": "28017 MEDAC MENDÍVIL", "k": "OM25096_MEDAC MENDIVIL_Alarmas de incendios", "d": "Vicente Panduro", "p": "Francisco Javier Burgos", "s": "EN PROGRESO", "e": "Pendiente coordinar", "b": 654.26, "t": "Obra Menor"}, {"c": "28020 MEDAC ALBALÁ", "k": "OM26028_MEDAC ALBALA_Obras adecuación bomberos", "d": "Vicente Panduro", "p": "Francisco Javier Burgos", "s": "EN PROGRESO", "e": "Pendiente coordinar", "b": 9770.8, "t": "Obra Menor"}, {"c": "08014 MEDAC ROGER DE LLURIA", "k": "OM26047_MEDAC ROGER DE LLURIA_Cambio suelo", "d": "Javier Villaplana", "p": "Merian Suarez Iglesias", "s": "EN PROGRESO", "e": "Pendiente coordinar", "b": 7258.5, "t": "Obra Menor"}, {"c": "28015 FUNDACIÓN MÓSTOLES", "k": "OM26065_FUNDACION MOSTOLES_Cubierta", "d": "Sonia Ordoñez", "p": "Jaime Fuentes", "s": "EN PROGRESO", "e": "Pendiente coordinar", "b": 9600.0, "t": "Obra Menor"}, {"c": "29110 MEDAC SAN RAFAEL", "k": "CF2603_MEDAC CENTRAL MALAGA", "d": "Jesús Moral", "p": "Jaime Fuentes", "s": "EN PROGRESO", "e": "Pendiente presupuesto", "b": 216000.0, "t": "Traslado"}, {"c": "08014 MEDAC ROGER DE LLURIA", "k": "OM25101_MEDAC ROGER DE LLURIA_Sustitución cristales claraboyas", "d": "Javier Villaplana", "p": "Merian Suarez Iglesias", "s": "EN PROGRESO", "e": "Pendiente presupuesto", "b": 5178.42, "t": "Obra Menor"}, {"c": "28027 MASTERD MADRID VELÁZQUEZ", "k": "OM26002_MASTERD MADRID II VELAZQUEZ_Adecuación baños y clima rack", "d": "Vladimir Carbonell", "p": "Francisco Javier Burgos", "s": "EN PROGRESO", "e": "Pendiente presupuesto", "b": 0, "t": "Obra Menor"}, {"c": "30013 MEDAC MURCIA", "k": "OM26012_MEDAC MURCIA_Humedades", "d": "Javier Villaplana", "p": "Jaime Fuentes", "s": "EN PROGRESO", "e": "Pendiente presupuesto", "b": 0, "t": "Obra Menor"}, {"c": "46012 MEDAC CAMPANAR", "k": "OM26013_MASTERD CAMPANAR_Implantación Equipo Oposiciones", "d": "Javier Villaplana", "p": "Merian Suarez Iglesias", "s": "EN PROGRESO", "e": "Pendiente presupuesto", "b": 98000.0, "t": "Obra Menor"}, {"c": "29017 MEDAC VELÁZQUEZ", "k": "OM26017_MEDAC VELAZQUEZ_Desnivel puerta", "d": "Jesús Moral", "p": "Jaime Fuentes", "s": "EN PROGRESO", "e": "Pendiente presupuesto", "b": 0, "t": "Obra Menor"}, {"c": "08014 MEDAC ROGER DE LLURIA", "k": "OM26046_MEDAC ROGER DE LLURIA_Sustitución fluorescentes por LED", "d": "Javier Villaplana", "p": "Merian Suarez Iglesias", "s": "EN PROGRESO", "e": "Pendiente presupuesto", "b": 0, "t": "Obra Menor"}, {"c": "03015 MEDAC PASTORA", "k": "OM25037_MEDAC PASTORA_Cubrir cuadro eléctrico", "d": "Javier Villaplana", "p": "Francisco Javier Burgos", "s": "EN PROGRESO", "e": "Búsqueda de proveedor", "b": 0, "t": "Obra Menor"}, {"c": "03014 MEDAC ELCHE", "k": "OM25052_MEDAC ELCHE_Cubrir cuadro eléctrico", "d": "Javier Villaplana", "p": "Francisco Javier Burgos", "s": "EN PROGRESO", "e": "Búsqueda de proveedor", "b": 0, "t": "Obra Menor"}, {"c": "28017 MEDAC MENDÍVIL", "k": "OM25082_MEDAC MENDIVIL_Solicitud de vado", "d": "Vicente Panduro", "p": "Merian Suarez Iglesias", "s": "EN PROGRESO", "e": "Búsqueda de proveedor", "b": 0, "t": "Obra Menor"}, {"c": "28021 MEDAC ALCORCÓN", "k": "OM26004_MEDAC ALCORCON_Solicitud vado", "d": "Vicente Panduro", "p": "Merian Suarez Iglesias", "s": "EN PROGRESO", "e": "Búsqueda de proveedor", "b": 0, "t": "Obra Menor"}, {"c": "29012 MEDAC AURORA", "k": "OM26005_MEDAC AURORA_Integración aulas en red de datos", "d": "Jesús Moral", "p": "Jaime Fuentes", "s": "EN PROGRESO", "e": "Búsqueda de proveedor", "b": 0, "t": "Obra Menor"}, {"c": "03014 MEDAC ELCHE", "k": "OM26007_MEDAC ELCHE_Cambios tabiquería y equipamiento EE", "d": "Javier Villaplana", "p": "Merian Suarez Iglesias", "s": "EN PROGRESO", "e": "Búsqueda de proveedor", "b": 0, "t": "Obra Menor"}, {"c": "50015 MEDAC ZARAGOZA", "k": "OM26008_MEDAC ZARAGOZA ACTUR_Cambios tabiquería y equipamiento EE", "d": "Vicente Panduro", "p": "Merian Suarez Iglesias", "s": "EN PROGRESO", "e": "Búsqueda de proveedor", "b": 0, "t": "Obra Menor"}, {"c": "50012 MEDAC FORMACCIONA", "k": "OM26009_MEDAC FORMACCIONA_Cambios tabiquería y equipamiento EE", "d": "Vicente Panduro", "p": "Merian Suarez Iglesias", "s": "EN PROGRESO", "e": "Búsqueda de proveedor", "b": 0, "t": "Obra Menor"}, {"c": "", "k": "CF2601_DAVANTE TARRASA_Centro de nueva apertura", "d": "Javier Villaplana", "p": "Germán Arqueros Rodríguez", "s": "EN PROGRESO", "e": "Expediente en curso", "b": 0, "t": "Obra Mayor"}, {"c": "", "k": "CF2602_DAVANTE MASTERD MALAGA PROFESIONALES_Traslado centro", "d": "Vladimir Carbonell", "p": "Germán Arqueros Rodríguez", "s": "EN PROGRESO", "e": "Expediente en curso", "b": 0, "t": "Traslado"}, {"c": "41012 MEDAC NUEVO TORNEO", "k": "OM25012_MEDAC NUEVO TORNEO_Fase I_accesibilidad y tabiquería", "d": "Elías Cabrera", "p": "Germán Arqueros Rodríguez", "s": "EN PROGRESO", "e": "Expediente en curso", "b": 0, "t": "Obra Menor"}, {"c": "33011 MEDAC OVIEDO", "k": "OM25050_MEDAC OVIEDO_Filtraciones agua", "d": "Vicente Panduro", "p": "Merian Suarez Iglesias", "s": "EN PROGRESO", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "23013 MEDAC AVENTURA", "k": "OM26011_MEDAC AVENTURA_ Ignifugación estructura", "d": "Elías Cabrera", "p": "Francisco Javier Burgos", "s": "EN PROGRESO", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "12010 MASTERD CASTELLÓN", "k": "OM26014_MASTERD CASTELLÓN_Legalización instalación eléctrica", "d": "Vladimir Carbonell", "p": "Francisco Javier Burgos", "s": "EN PROGRESO", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "28015 FUNDACIÓN MÓSTOLES", "k": "OM26015_FUNDACION MOSTOLES_PCI", "d": "Sonia Ordoñez", "p": "Francisco Javier Burgos", "s": "EN PROGRESO", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "28021 MEDAC ALCORCÓN", "k": "OM26016_MEDAC ALCORCÓN_PCI", "d": "Vicente Panduro", "p": "Francisco Javier Burgos", "s": "EN PROGRESO", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "11012 MEDAC FLORES", "k": "OM26064_MEDAC FLORES_Legalización", "d": "Elías Cabrera", "p": "Germán Arqueros Rodríguez", "s": "EN PROGRESO", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "23013 MEDAC AVENTURA", "k": "OM26020_MEDAC AVENTURA_Puesta a punto ambulancia", "d": "Elías Cabrera", "p": "Jaime Fuentes", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "23013 MEDAC AVENTURA", "k": "OM26021_MEDAC AVENTURA_Reparación puerta pabellón", "d": "Elías Cabrera", "p": "Jaime Fuentes", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "23013 MEDAC AVENTURA", "k": "OM26022_MEDAC AVENTURA_Soterrar cables sillones bucodentales", "d": "Elías Cabrera", "p": "Jaime Fuentes", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "23011 MEDAC JAÉN", "k": "OM26024_MEDAC JAEN_Reparar suelo hundido", "d": "Elías Cabrera", "p": "Jaime Fuentes", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "23011 MEDAC JAÉN", "k": "OM26025_MEDAC JAEN_PCI y BT", "d": "Elías Cabrera", "p": "Francisco Javier Burgos", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "28018 MEDAC MÓSTOLES", "k": "OM26026_MEDAC MOSTOLES_Electrificación aulas", "d": "Vicente Panduro", "p": "Jaime Fuentes", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "02012 MEDAC ALBACETE", "k": "OM26027_MEDAC ALBACETE_Almacén bicis", "d": "Javier Villaplana", "p": "Jaime Fuentes", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "04012 MEDAC ALMERÍA", "k": "OM26028_MEDAC ALMERIA_Electrificación aulas", "d": "Jesús Moral", "p": "Jaime Fuentes", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "14012 MEDAC ARENA", "k": "OM26029_MEDAC ARENA_Techado entrada principal", "d": "Elías Cabrera", "p": "Jaime Fuentes", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "29012 MEDAC AURORA", "k": "OM26030_MEDAC AURORA_Máquinas A/A", "d": "Jesús Moral", "p": "Francisco Javier Burgos", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "30012 MEDAC CARTAGENA", "k": "OM26031_MEDAC CARTAGENA_Reparación cubierta goteras", "d": "Javier Villaplana", "p": "Jaime Fuentes", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "14014 MEDAC FÁTIMA", "k": "OM26032_MEDAC FATIMA_Arreglo de fisuras por asentamientos diferenciales", "d": "Elías Cabrera", "p": "Jaime Fuentes", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "18013 MEDAC GRANADA-WE", "k": "OM26033_MEDAC GRANADA_Independizar cuadro eléctrico", "d": "Jesús Moral", "p": "Francisco Javier Burgos", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "18013 MEDAC GRANADA-WE", "k": "OM26034_MEDAC GRANADA_A/A Gimnasio", "d": "Jesús Moral", "p": "Francisco Javier Burgos", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "08013 MEDAC HOSPITALET", "k": "OM26035_MEDAC HOSPITALET_Ampliación secretaría", "d": "Javier Villaplana", "p": "Merian Suarez Iglesias", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "28023 MEDAC FUENLABRADA", "k": "OM26036_MEDAC FUENLABRADA_Electrificación taller", "d": "Vicente Panduro", "p": "Jaime Fuentes", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "18014 MEDAC NEVADA", "k": "OM26038_MEDAC NEVADA_Reforma baños", "d": "Jesús Moral", "p": "Jaime Fuentes", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "18014 MEDAC NEVADA", "k": "OM26039_MEDAC NEVADA_Reforzar suelo talleres", "d": "Jesús Moral", "p": "Jaime Fuentes", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "18014 MEDAC NEVADA", "k": "OM26040_MEDAC NEVADA_Instalar split", "d": "Jesús Moral", "p": "Francisco Javier Burgos", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "29015 MEDAC ORTEGA Y GASSET", "k": "OM26041_MEDAC ORTEGA Y GASSET_Tabique", "d": "Jesús Moral", "p": "Jaime Fuentes", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "28024 MEDAC PINTO", "k": "OM26042_MEDAC PINTO_Ventanas", "d": "Vicente Panduro", "p": "Jaime Fuentes", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "28024 MEDAC PINTO", "k": "OM26043_MEDAC PINTO_Albañilería y puesta al día humedades", "d": "Vicente Panduro", "p": "Jaime Fuentes", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "46013 MEDAC VALENCIA", "k": "OM26044_MEDAC VALENCIA_Instalación luces LED", "d": "Javier Villaplana", "p": "Merian Suarez Iglesias", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "46013 MEDAC VALENCIA", "k": "OM26045_MEDAC VALENCIA_Pintura friso", "d": "Javier Villaplana", "p": "Merian Suarez Iglesias", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "41013 MEDAC SEVILLA ESTE", "k": "OM26048_MEDAC SEVILLA ESTE_Instalación puerta", "d": "Elías Cabrera", "p": "Jaime Fuentes", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "41013 MEDAC SEVILLA ESTE", "k": "OM26049_MEDAC SEVILLA ESTE_Actualización rocódromo", "d": "Elías Cabrera", "p": "Jaime Fuentes", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "46012 MEDAC CAMPANAR", "k": "OM26050_MEDAC CAMPANAR_Instalación fotovoltaica", "d": "Javier Villaplana", "p": "Francisco Javier Burgos", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "28010 MASTERD MADRID ALONSO CANO", "k": "OM26051_MASTERD ALONSO CANO_Renovación climatización", "d": "Vladimir Carbonell", "p": "Francisco Javier Burgos", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "50111 MASTERD ZARAGOZA PLAZA", "k": "OM26052_MASTERD ZARAGOZA PLAZA_Revisión y arreglo puertas de emergencia", "d": "Vladimir Carbonell", "p": "Francisco Javier Burgos", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "50111 MASTERD ZARAGOZA PLAZA", "k": "OM26053_MASTERD ZARAGOZA PLAZA_Deficiencias en sala de bombas", "d": "Vladimir Carbonell", "p": "Francisco Javier Burgos", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "50111 MASTERD ZARAGOZA PLAZA", "k": "OM26054_MASTERD ZARAGOZA PLAZA_Colocación tapas A/A", "d": "Vladimir Carbonell", "p": "Francisco Javier Burgos", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "50111 MASTERD ZARAGOZA PLAZA", "k": "OM26055_MASTERD ZARAGOZA PLAZA_Cargador coches eléctricos", "d": "Vladimir Carbonell", "p": "Francisco Javier Burgos", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "50111 MASTERD ZARAGOZA PLAZA", "k": "OM26056_MASTERD ZARAGOZA PLAZA_Instalación fotovoltaica", "d": "Vladimir Carbonell", "p": "Francisco Javier Burgos", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "28021 MEDAC ALCORCÓN", "k": "OM26057_MEDAC ALCORCON_Pintura valla exterior", "d": "Vicente Panduro", "p": "Jaime Fuentes", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "04013 MEDAC EL EJIDO", "k": "OM26058_MEDAC EL EJIDO_Revestir pared con humedades", "d": "Jesús Moral", "p": "Jaime Fuentes", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "11012 MEDAC FLORES", "k": "OM26059_MEDAC FLORES_Reponer placas de techo humedad", "d": "Elías Cabrera", "p": "Jaime Fuentes", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "21013 MEDAC AL-ÁNDALUS", "k": "OM26060_MEDAC HUELVA_Legalización instalación clima", "d": "Elías Cabrera", "p": "Francisco Javier Burgos", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "29017 MEDAC VELÁZQUEZ", "k": "OM26061_MEDAC VELAZQUEZ_Cambio máquina A/A", "d": "Vicente Panduro", "p": "Francisco Javier Burgos", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "36010 MASTERD VIGO", "k": "OM26062_MASTERD VIGO_Cambio unidades A/A", "d": "Vladimir Carbonell", "p": "Pablo González, Francisco Javier Burgos", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "50110 MASTERD ZARAGOZA CENTRAL", "k": "OM26063_MASTERD ZARAGOZA CENTRAL_Revisión y arreglo puertas de emergencia", "d": "Vladimir Carbonell", "p": "Francisco Javier Burgos", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "30014 MASTERD MURCIA INFANTA", "k": "OM26067_MASTERD MURCIA_Puerta automatica", "d": "Vladimir Carbonell", "p": "Jaime Fuentes", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}, {"c": "29110 MEDAC SAN RAFAEL", "k": "OM26100_INSTALACION CAMPANAS LABORATORIO", "d": "", "p": "Francisco Javier Burgos, Merian Suarez Iglesias, Jaime Fuentes", "s": "PENDIENTE", "e": "", "b": 0, "t": "Obra Menor"}], "maint": {"Centros MasterD": {"t": 109, "T": 28, "P": 29, "E": 43, "B": 6, "R": 3, "U": 50, "H": 35, "N": 24, "L": 0}, "Elías Cabrera": {"t": 195, "T": 83, "P": 30, "E": 19, "B": 62, "R": 1, "U": 47, "H": 55, "N": 73, "L": 5}, "Fundación": {"t": 171, "T": 62, "P": 42, "E": 20, "B": 44, "R": 3, "U": 94, "H": 39, "N": 19, "L": 3}, "Javier Villaplana": {"t": 77, "T": 18, "P": 21, "E": 8, "B": 30, "R": 0, "U": 39, "H": 19, "N": 9, "L": 0}, "Jesús Moral": {"t": 71, "T": 28, "P": 18, "E": 10, "B": 15, "R": 0, "U": 13, "H": 20, "N": 25, "L": 0}, "Vicente Panduro": {"t": 82, "T": 0, "P": 24, "E": 17, "B": 40, "R": 1, "U": 28, "H": 32, "N": 7, "L": 0}}, "lic": {"Obra": [91, 7, 11, 1], "Apertura": [91, 16, 0, 1], "Educación": [40, 3, 71, 0], "BT": [27, 20, 0, 8], "PCI": [0, 19, 7, 0], "Térmicas": [9, 18, 0, 0], "CEE": [34, 79, 10, 0]}, "seg": {"260212": 25, "260219": 27, "260226": 27, "260305": 32, "260312": 32}, "licDetail": [{"n": "MEDAC MALASAÑA", "r": "CFP", "o": "N/A", "a": "OK", "e": "OK", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "MEDAC PACÍFICO", "r": "CFP", "o": "OK", "a": "OK", "e": "OK", "b": "-", "p": "-", "t": "-", "c": "OK"}, {"n": "MEDAC SAN RAFAEL", "r": "CFP", "o": "OK", "a": "OK", "e": "OK", "b": "-", "p": "-", "t": "-", "c": "OK"}, {"n": "MEDAC VELÁZQUEZ", "r": "CFP", "o": "OK", "a": "OK", "e": "OK", "b": "-", "p": "-", "t": "-", "c": "OK"}, {"n": "MEDAC ALMERÍA", "r": "CFP", "o": "N/A", "a": "OK", "e": "OK", "b": "-", "p": "-", "t": "-", "c": "N/A"}, {"n": "MEDAC EL EJIDO", "r": "CFP", "o": "N/A", "a": "OK", "e": "OK", "b": "-", "p": "-", "t": "-", "c": "N/A"}, {"n": "MEDAC CÓRDOBA (Escritora López Ayala 7)", "r": "CFP", "o": "DENEGADA", "a": "DENEGADA", "e": "OK", "b": "FALTA", "p": "FALTA", "t": "FALTA", "c": "FALTA"}, {"n": "MEDAC CÓRDOBA (Avda. Guerrita 33)", "r": "CFP", "o": "OK", "a": "OK", "e": "N/A", "b": "FALTA", "p": "FALTA", "t": "FALTA", "c": "FALTA"}, {"n": "MEDAC ARENA", "r": "CFP", "o": "OK", "a": "OK", "e": "OK", "b": "OK", "p": "N/A", "t": "FALTA", "c": "N/A"}, {"n": "MEDAC ALMENARA", "r": "CFP", "o": "N/A", "a": "OK", "e": "OK", "b": "-", "p": "-", "t": "-", "c": "OK"}, {"n": "MEDAC GRANADA WE", "r": "CFP", "o": "N/A", "a": "OK", "e": "OK", "b": "-", "p": "-", "t": "-", "c": "N/A"}, {"n": "MEDAC SEVILLA ESTE", "r": "CFP", "o": "OK", "a": "OK", "e": "OK", "b": "-", "p": "-", "t": "-", "c": "OK"}, {"n": "MEDAC SEVILLA ESTE 3", "r": "CFP", "o": "OK", "a": "OK", "e": "OK", "b": "OK", "p": "FALTA", "t": "OK", "c": "OK"}, {"n": "MEDAC SAN SEBASTIÁN DE LOS REYES", "r": "CFP", "o": "OK", "a": "OK", "e": "OK", "b": "-", "p": "-", "t": "-", "c": "OK"}, {"n": "MEDAC JEREZ", "r": "CFP", "o": "OK", "a": "OK", "e": "OK", "b": "-", "p": "-", "t": "-", "c": "OK"}, {"n": "MEDAC NEVADA", "r": "CFP", "o": "OK", "a": "OK", "e": "OK", "b": "-", "p": "-", "t": "-", "c": "OK"}, {"n": "MEDAC FUENLABRADA", "r": "CFP", "o": "OK", "a": "OK", "e": "OK", "b": "OK", "p": "FALTA", "t": "OK", "c": "OK"}, {"n": "MEDAC VALENCIA", "r": "CFP", "o": "OK", "a": "OK", "e": "OK", "b": "-", "p": "-", "t": "-", "c": "OK"}, {"n": "MEDAC ALICANTE", "r": "CFP", "o": "OK", "a": "FALTA", "e": "OK", "b": "OK", "p": "FALTA", "t": "OK", "c": "OK"}, {"n": "MEDAC ALBACETE", "r": "CFP", "o": "N/A", "a": "FALTA", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "N/A"}, {"n": "MEDAC MURCIA", "r": "CFP", "o": "N/A", "a": "OK", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "N/A"}, {"n": "CENTRAL MEDAC IT", "r": "CFP", "o": "OK", "a": "OK", "e": "OK", "b": "OK", "p": "N/A", "t": "FALTA", "c": "OK"}, {"n": "MEDAC SAN RAFAEL CALL CENTER", "r": "CFP", "o": "N/A", "a": "OK", "e": "OK", "b": "-", "p": "-", "t": "-", "c": "OK"}, {"n": "MEDAC FÁTIMA", "r": "CFP", "o": "OK", "a": "OK", "e": "OK", "b": "-", "p": "-", "t": "-", "c": "OK"}, {"n": "MEDAC AURORA", "r": "CFP", "o": "OK", "a": "OK", "e": "OK", "b": "-", "p": "-", "t": "-", "c": "OK"}, {"n": "MEDAC ALCORCÓN", "r": "CFP", "o": "OK", "a": "OK", "e": "OK", "b": "-", "p": "-", "t": "-", "c": "OK"}, {"n": "MEDAC FLORES", "r": "CFP", "o": "OK", "a": "OK", "e": "OK", "b": "FALTA", "p": "FALTA", "t": "FALTA", "c": "OK"}, {"n": "MEDAC NOVA", "r": "CFP", "o": "FALTA", "a": "OK", "e": "OK", "b": "-", "p": "-", "t": "-", "c": "N/A"}, {"n": "MEDAC PASTORA", "r": "CFP", "o": "OK", "a": "OK", "e": "OK", "b": "-", "p": "-", "t": "-", "c": "OK"}, {"n": "MEDAC ZARAGOZA", "r": "CFP", "o": "OK", "a": "FALTA", "e": "OK", "b": "-", "p": "-", "t": "-", "c": "OK"}, {"n": "MEDAC PINTO I", "r": "CFP", "o": "OK", "a": "OK", "e": "OK", "b": "OK", "p": "FALTA", "t": "OK", "c": "FALTA"}, {"n": "MEDAC ALBALÁ", "r": "CFP", "o": "FALTA", "a": "FALTA", "e": "OK", "b": "FALTA", "p": "FALTA", "t": "FALTA", "c": "N/A"}, {"n": "MEDAC OVIEDO", "r": "CFP", "o": "OK", "a": "OK", "e": "OK", "b": "OK", "p": "FALTA", "t": "OK", "c": "N/A"}, {"n": "MEDAC EL OLIVAR", "r": "FA", "o": "N/A", "a": "OK", "e": "OK", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "MEDAC CARTAGENA", "r": "CFP", "o": "OK", "a": "OK", "e": "OK", "b": "OK", "p": "FALTA", "t": "FALTA", "c": "OK"}, {"n": "MEDAC FORMACCIONA", "r": "CFP", "o": "OK", "a": "OK", "e": "FALTA", "b": "OK", "p": "FALTA", "t": "FALTA", "c": "FALTA"}, {"n": "MEDAC ORTEGA Y GASSET", "r": "SG", "o": "N/A", "a": "FALTA", "e": "FALTA", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "MEDAC CAMPANAR", "r": "SG", "o": "OK", "a": "OK", "e": "OK", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "MEDAC HISPANIDAD", "r": "CFP", "o": "OK", "a": "OK", "e": "OK", "b": "OK", "p": "FALTA", "t": "OK", "c": "FALTA"}, {"n": "MEDAC AL-ÁNDALUS", "r": "CFP", "o": "FALTA", "a": "FALTA", "e": "FALTA", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "MEDAC ELCHE", "r": "CFP", "o": "OK", "a": "FALTA", "e": "OK", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "MEDAC L´HOSPITALET", "r": "CFP", "o": "OK", "a": "OK", "e": "OK", "b": "OK", "p": "-", "t": "OK", "c": "FALTA"}, {"n": "MEDAC LEGANÉS ON LINE", "r": "CFP", "o": "OK", "a": "FALTA", "e": "OK", "b": "-", "p": "FALTA", "t": "-", "c": "OK"}, {"n": "MEDAC CASTELLÓN", "r": "ITEP", "o": "OK", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "OK"}, {"n": "MEDAC PINTO II", "r": "ITEP", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "OK"}, {"n": "MEDAC NUEVO TORNEO", "r": "ITEP", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "OK"}, {"n": "MEDAC MENDIVIL", "r": "ITEP", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "OK"}, {"n": "MEDAC MÓSTOLES", "r": "ITEP", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "OK"}, {"n": "MEDAC FRANCISCO IGLESIAS", "r": "IFP", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "MEDAC SAN SEBASTIAN DE LOS REYES", "r": "IFP", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "MEDAC JAÉN", "r": "IFP", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "MEDAC AVENTURA", "r": "RLL", "o": "OK", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "MEDAC VANDELVIRIA", "r": "FD", "o": "OK", "a": "OK", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "ROGER DE LLURIA", "r": "FD", "o": "OK", "a": "OK", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "FUNDACIÓN MÁLAGA", "r": "FD", "o": "OK", "a": "OK", "e": "N/A", "b": "OK", "p": "N/A", "t": "FALTA", "c": "FALTA"}, {"n": "FUNDACIÓN VALENCIA", "r": "FD", "o": "OK", "a": "OK", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "FUNDACIÓN ALICANTE", "r": "FD", "o": "OK", "a": "OK", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "FUNDACIÓN ALMERÍA", "r": "FD", "o": "OK", "a": "-", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "FUNDACIÓN SEVILLA", "r": "FD", "o": "OK", "a": "OK", "e": "N/A", "b": "OK", "p": "FALTA", "t": "FALTA", "c": "FALTA"}, {"n": "FUNDACIÓN MÓSTOLES", "r": "FD", "o": "OK", "a": "-", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "FUNDACIÓN ZARAGOZA", "r": "FD", "o": "OK", "a": "-", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "FUNDACIÓN GRANADA", "r": "FD", "o": "OK", "a": "OK", "e": "N/A", "b": "OK", "p": "FALTA", "t": "OK", "c": "FALTA"}, {"n": "FUNDACIÓN ALBACETE", "r": "FD", "o": "OK", "a": "OK", "e": "N/A", "b": "OK", "p": "FALTA", "t": "FALTA", "c": "FALTA"}, {"n": "FUNDACIÓN CÓRDOBA", "r": "FD", "o": "-", "a": "-", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "FUNDACIÓN MURCIA", "r": "FD", "o": "-", "a": "-", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "FUNDACIÓN HUELVA", "r": "FD", "o": "OK", "a": "OK", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "FUNDACIÓN JEREZ", "r": "FD", "o": "OK", "a": "OK", "e": "N/A", "b": "OK", "p": "N/A", "t": "FALTA", "c": "FALTA"}, {"n": "FUNDACIÓN ALICANTE 2", "r": "MD", "o": "OK", "a": "FALTA", "e": "N/A", "b": "FALTA", "p": "FALTA", "t": "FALTA", "c": "OK"}, {"n": "FUNDACIÓN CASTELLÓN", "r": "MD", "o": "OK", "a": "FALTA", "e": "N/A", "b": "OK", "p": "FALTA", "t": "FALTA", "c": "OK"}, {"n": "ZARAGOZA (CENTRAL)", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "OK", "p": "-", "t": "-", "c": "FALTA"}, {"n": "ZARAGOZA (PLAZA)", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "FALTA", "p": "-", "t": "-", "c": "FALTA"}, {"n": "ZARAGOZA (TECHNOCENTER)", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "SOLO ELECT", "p": "-", "t": "-", "c": "OK"}, {"n": "ZARAGOZA (AVDA. NAVARRA)", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "SOLO ELECT", "p": "-", "t": "-", "c": "FALTA"}, {"n": "PAMPLONA", "r": "MD", "o": "FALTA", "a": "FALTA", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "LOGROÑO", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "FALTA", "p": "-", "t": "-", "c": "FALTA"}, {"n": "VALLADOLID", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "FALTA", "p": "-", "t": "-", "c": "FALTA"}, {"n": "MASTER D BILBAO (LEHENDAKARI)", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "OK", "p": "FALTA", "t": "FALTA", "c": "FALTA"}, {"n": "MASTER D BILBAO (AUTONOMIA)", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "OK", "p": "N/A", "t": "OK", "c": "FALTA"}, {"n": "SAN SEBASTIAN", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "MASTER D VITORIA", "r": "MD", "o": "FALTA", "a": "FALTA", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "SANTANDER", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "LA CORUÑA", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "OK", "p": "N/A", "t": "FALTA", "c": "FALTA"}, {"n": "MASTER D VIGO", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "MASTER D OVIEDO", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "GIRONA", "r": "MD", "o": "FALTA", "a": "OK", "e": "N/A", "b": "FALTA", "p": "-", "t": "-", "c": "FALTA"}, {"n": "LÉRIDA", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "FALTA", "p": "-", "t": "-", "c": "FALTA"}, {"n": "TARRAGONA", "r": "MD", "o": "-", "a": "OK", "e": "N/A", "b": "FALTA", "p": "-", "t": "-", "c": "FALTA"}, {"n": "TARRAGONA (COMERCIAL)", "r": "MD", "o": "OK", "a": "FALTA", "e": "N/A", "b": "FALTA", "p": "-", "t": "-", "c": "FALTA"}, {"n": "MALLORCA (COMERCIAL)", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "MALLORCA", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "CASTELLÓN", "r": "MD", "o": "OK", "a": "-", "e": "OK", "b": "SOLO ELECT", "p": "-", "t": "-", "c": "FALTA"}, {"n": "CASTELLÓN (OFICINAS)", "r": "MD", "o": "OK", "a": "OK", "e": "OK", "b": "SOLO ELECT", "p": "-", "t": "-", "c": "FALTA"}, {"n": "MASTER D ALICANTE PROFESIONALES", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "FALTA", "p": "-", "t": "-", "c": "FALTA"}, {"n": "MASTER D ALICANTE OPOSICIONES", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "SOLO ELECT", "p": "-", "t": "-", "c": "FALTA"}, {"n": "MASTER D MURCIA (JUAN CARLOS I)", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "FALTA", "p": "N/A", "t": "FALTA", "c": "FALTA"}, {"n": "MASTER D MURCIA (INFANTA CRISTINA)", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "OK", "p": "-", "t": "-", "c": "FALTA"}, {"n": "MASTER D BADAJOZ", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "TOLEDO", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "OK", "p": "-", "t": "-", "c": "FALTA"}, {"n": "CIUDAD REAL", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "MASTER D ALBACETE", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "HUELVA", "r": "IK", "o": "OK", "a": "OK", "e": "N/A", "b": "FALTA", "p": "-", "t": "-", "c": "FALTA"}, {"n": "JEREZ", "r": "MD", "o": "-", "a": "OK", "e": "N/A", "b": "FALTA", "p": "-", "t": "-", "c": "FALTA"}, {"n": "JEREZ", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "ALGECIRAS", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "OK", "p": "-", "t": "-", "c": "FALTA"}, {"n": "MASTER D MÁLAGA", "r": "MD", "o": "N/A", "a": "OK", "e": "N/A", "b": "FALTA", "p": "-", "t": "-", "c": "FALTA"}, {"n": "MÁLAGA (CUARTELES P1ª)", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "MÁLAGA (CUARTELES P6ª)", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "MASTER D CÓRDOBA", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "SOLO ELECT", "p": "-", "t": "-", "c": "OK"}, {"n": "JAEN (AVDA. GRANADA)", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "MASTER D GRANADA", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "OK"}, {"n": "MASTER D ALMERÍA", "r": "MD", "o": "-", "a": "FALTA", "e": "N/A", "b": "SOLO ELECT", "p": "-", "t": "-", "c": "FALTA"}, {"n": "TENERIFE", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "SOLO ELECT", "p": "-", "t": "-", "c": "FALTA"}, {"n": "TENERIFE (CASTILLO)", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "FALTA", "p": "-", "t": "-", "c": "FALTA"}, {"n": "LAS PLAMAS", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "OK"}, {"n": "ALCALÁ", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "FALTA", "p": "-", "t": "-", "c": "FALTA"}, {"n": "MADRID", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "OK", "p": "-", "t": "-", "c": "FALTA"}, {"n": "MADRID", "r": "MD", "o": "-", "a": "FALTA", "e": "N/A", "b": "OK", "p": "-", "t": "-", "c": "FALTA"}, {"n": "BARCELONA (PROVENÇA)", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "BARCELONA (COMTE BARRELL)", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "MASTER D SEVILLA (SARAMAGO)", "r": "MD", "o": "OK", "a": "OK", "e": "N/A", "b": "-", "p": "-", "t": "-", "c": "FALTA"}, {"n": "VALENCIA-HISTORIADOR", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "VALENCIA", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D ZARAGOZA CENTRAL", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D ZARAGOZA PLAZA", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D ZARAGOZA TECHNOCENTER", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D ZARAGOZA AVENIDA", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D PAMPLONA", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D LOGROÑO", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D BURGOS", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D VALLADOLID", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D BILBAO", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D BILBAO", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D SAN SEBASTIAN", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D VITORIA", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D SANTANDER", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D LA CORUÑA", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D VIGO", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D OVIEDO", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D GIRONA", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D LÉRIDA", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D TARRAGONA", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D TARRAGONA (OFICINA COMERCIAL)", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MALLORCA", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MALLORCA", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D CASTELLON", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D CASTELLON (OFICINA COMERCIAL)", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D ALICANTE PROFESIONALES", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D ALICANTE OPOSICIONES", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D MURCIA-INFANTA", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D MURCIA-JUAN CARLOS", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D BADAJOZ", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D TOLEDO", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D CIUDAD REAL", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D ALBACETE", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D HUELVA", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D JEREZ", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D JEREZ", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D ALGECIRAS", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D MÁLAGA SALITRE", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D MÁLAGA CUARTELES", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D CÓRDOBA", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D JAÉN", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D GRANADA", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D ALMERÍA", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D TENERIFE", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D TENERIFE", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D LAS PALMAS", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D ALCALÁ DE HENARES", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D MADRID PROFESIONALES", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D MADRID OPOSICIONES", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D BARCELONA PROVENÇA", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D SEVILLA PROFESIONALES", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D SEVILLA OPOSICIONES", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D VALENCIA-HISTORIADOR", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}, {"n": "MASTER D VALENCIA", "r": "MD", "o": "-", "a": "-", "e": "-", "b": "-", "p": "-", "t": "-", "c": "-"}], "sup": [{"m": "Medac", "n": "Flores", "pr": "CÁDIZ", "cc": "ANDALUCÍA", "s": 1053.0}, {"m": "Medac", "n": "Jerez", "pr": "CÁDIZ", "cc": "ANDALUCÍA", "s": 820.0}, {"m": "Medac", "n": "Castellón", "pr": "CASTELLÓN", "cc": "COMUNIDAD VALENCIANA", "s": 2317.0}, {"m": "Medac", "n": "Arena", "pr": "CÓRDOBA", "cc": "ANDALUCÍA", "s": 1099.0}, {"m": "Medac", "n": "Córdoba", "pr": "CÓRDOBA", "cc": "ANDALUCÍA", "s": 1513.0}, {"m": "Medac", "n": "Almenara", "pr": "GRANADA", "cc": "ANDALUCÍA", "s": 1041.0}, {"m": "Medac", "n": "Granada WE", "pr": "GRANADA", "cc": "ANDALUCÍA", "s": 4272.0}, {"m": "Medac", "n": "Nevada", "pr": "GRANADA", "cc": "ANDALUCÍA", "s": 3797.0}, {"m": "Medac", "n": "Al-Ándalus", "pr": "HUELVA", "cc": "ANDALUCÍA", "s": 2143.0}, {"m": "Medac", "n": "Albalá", "pr": "MADRID", "cc": "COMUNIDAD DE MADRID", "s": 3754.0}, {"m": "Medac", "n": "Alcorcón", "pr": "MADRID", "cc": "COMUNIDAD DE MADRID", "s": 2814.0}, {"m": "Medac", "n": "SS de los Reyes", "pr": "MADRID", "cc": "COMUNIDAD DE MADRID", "s": 1522.0}, {"m": "Medac", "n": "Fuenlabrada", "pr": "MADRID", "cc": "COMUNIDAD DE MADRID", "s": 4430.0}, {"m": "Medac", "n": "Pinto", "pr": "MADRID", "cc": "COMUNIDAD DE MADRID", "s": 6016.0}, {"m": "Medac", "n": "Leganés Online", "pr": "MADRID", "cc": "COMUNIDAD DE MADRID", "s": 4508.0}, {"m": "Medac", "n": "Aurora", "pr": "MÁLAGA", "cc": "ANDALUCÍA", "s": 1532.0}, {"m": "Medac", "n": "Malasaña", "pr": "MÁLAGA", "cc": "ANDALUCÍA", "s": 997.0}, {"m": "Medac", "n": "Nova", "pr": "MÁLAGA", "cc": "ANDALUCÍA", "s": 3313.0}, {"m": "Medac", "n": "Ortega y Gasset", "pr": "MÁLAGA", "cc": "ANDALUCÍA", "s": 1822.0}, {"m": "Medac", "n": "Pacífico", "pr": "MÁLAGA", "cc": "ANDALUCÍA", "s": 1335.0}, {"m": "Medac", "n": "Velázquez", "pr": "MÁLAGA", "cc": "ANDALUCÍA", "s": 1592.0}, {"m": "Medac", "n": "Call Center", "pr": "MÁLAGA", "cc": "ANDALUCÍA", "s": 503.0}, {"m": "Medac", "n": "Cartagena", "pr": "MURCIA", "cc": "MURCIA", "s": 2479.0}, {"m": "Medac", "n": "Oviedo", "pr": "ASTURIAS", "cc": "ASTURIAS", "s": 3035.0}, {"m": "Medac", "n": "Sevilla", "pr": "SEVILLA", "cc": "ANDALUCÍA", "s": 5346.0}, {"m": "Medac", "n": "Campanar", "pr": "VALENCIA", "cc": "COMUNIDAD VALENCIANA", "s": 3105.0}, {"m": "Medac", "n": "Valencia", "pr": "VALENCIA", "cc": "COMUNIDAD VALENCIANA", "s": 3960.0}, {"m": "Medac", "n": "Formacciona", "pr": "ZARAGOZA", "cc": "ARAGÓN", "s": 1441.0}, {"m": "Medac", "n": "El Olivar", "pr": "ZARAGOZA", "cc": "ARAGÓN", "s": 200.0}, {"m": "Medac", "n": "Zaragoza", "pr": "ZARAGOZA", "cc": "ARAGÓN", "s": 3827.0}, {"m": "Medac", "n": "Albacete", "pr": "ALBACETE", "cc": "CASTILLA LA MANCHA", "s": 2639.0}, {"m": "Medac", "n": "Alicante", "pr": "ALICANTE", "cc": "COMUNIDAD VALENCIANA", "s": 2285.0}, {"m": "Medac", "n": "Elche", "pr": "ALICANTE", "cc": "COMUNIDAD VALENCIANA", "s": 2832.0}, {"m": "Medac", "n": "Pastora", "pr": "ALICANTE", "cc": "COMUNIDAD VALENCIANA", "s": 1693.0}, {"m": "Medac", "n": "Almería", "pr": "ALMERÍA", "cc": "ANDALUCÍA", "s": 3727.0}, {"m": "Medac", "n": "El Ejido", "pr": "ALMERÍA", "cc": "ANDALUCÍA", "s": 515.0}, {"m": "Medac", "n": "L' Hospitalet", "pr": "BARCELONA", "cc": "CATALUÑA", "s": 3284.0}, {"m": "Medac", "n": "Fátima", "pr": "CÓRDOBA", "cc": "ANDALUCÍA", "s": 660.0}, {"m": "Medac", "n": "San Rafael", "pr": "MÁLAGA", "cc": "MÁLAGA", "s": 835.0}, {"m": "Medac", "n": "Murcia", "pr": "MURCIA", "cc": "MURCIA", "s": 1318.0}, {"m": "Fundación", "n": "Jerez", "pr": "CÁDIZ", "cc": "ANDALUCÍA", "s": 1017.0}, {"m": "Fundación", "n": "Castellón", "pr": "CASTELLÓN", "cc": "COMUNIDAD VALENCIANA", "s": 583.0}, {"m": "Fundación", "n": "Córdoba", "pr": "CÓRDOBA", "cc": "ANDALUCÍA", "s": 599.0}, {"m": "Fundación", "n": "Granada", "pr": "GRANADA", "cc": "ANDALUCÍA", "s": 2245.0}, {"m": "Fundación", "n": "Móstoles", "pr": "MADRID", "cc": "COMUNIDAD DE MADRID", "s": 1673.0}, {"m": "Fundación", "n": "Málaga", "pr": "MÁLAGA", "cc": "ANDALUCÍA", "s": 1190.0}, {"m": "Fundación", "n": "Murcia", "pr": "MURCIA", "cc": "MURCIA", "s": 638.0}, {"m": "Fundación", "n": "Oviedo", "pr": "ASTURIAS", "cc": "ASTURIAS", "s": 439.0}, {"m": "Fundación", "n": "Sevilla", "pr": "SEVILLA", "cc": "ANDALUCÍA", "s": 701.0}, {"m": "Fundación", "n": "Valencia", "pr": "VALENCIA", "cc": "COMUNIDAD VALENCIANA", "s": 461.0}, {"m": "Fundación", "n": "Zaragoza", "pr": "ZARAGOZA", "cc": "ARAGÓN", "s": 1320.0}, {"m": "Fundación", "n": "Albacete", "pr": "ALBACETE", "cc": "CASTILLA LA MANCHA", "s": 287.0}, {"m": "Fundación", "n": "Alicante", "pr": "ALICANTE", "cc": "COMUNIDAD VALENCIANA", "s": 467.0}, {"m": "Fundación", "n": "Alicante II", "pr": "ALICANTE", "cc": "COMUNIDAD VALENCIANA", "s": 549.0}, {"m": "Fundación", "n": "Almería", "pr": "ALMERÍA", "cc": "ANDALUCÍA", "s": 579.0}, {"m": "IFP", "n": "Jaén", "pr": "JAEN", "cc": "ANDALUCÍA", "s": 272.0}, {"m": "IFP", "n": "Aventura", "pr": "JAEN", "cc": "ANDALUCÍA", "s": 5138.0}, {"m": "ITP", "n": "Francisco Iglesias", "pr": "MADRID", "cc": "COMUNIDAD DE MADRID", "s": 603.0}, {"m": "ITP", "n": "Mendívil", "pr": "MADRID", "cc": "COMUNIDAD DE MADRID", "s": 1416.0}, {"m": "ITP", "n": "Móstoles", "pr": "MADRID", "cc": "COMUNIDAD DE MADRID", "s": 1393.0}, {"m": "ITP", "n": "Nuevo Torneo", "pr": "SEVILLA", "cc": "ANDALUCÍA", "s": 2652.0}, {"m": "MasterD", "n": "Jerez Unión", "pr": "CÁDIZ", "cc": "ANDALUCÍA", "s": 454.0}, {"m": "MasterD", "n": "Jerez Cartuja", "pr": "CÁDIZ", "cc": "ANDALUCÍA", "s": 178.0}, {"m": "MasterD", "n": "Castellón", "pr": "CASTELLÓN", "cc": "COMUNIDAD VALENCIANA", "s": 190.0}, {"m": "MasterD", "n": "Castellón", "pr": "CASTELLÓN", "cc": "COMUNIDAD VALENCIANA", "s": 152.0}, {"m": "MasterD", "n": "Ciudad Real", "pr": "CIUDAD REAL", "cc": "CASTILLA LA MANCHA", "s": 388.0}, {"m": "MasterD", "n": "Córdoba", "pr": "CÓRDOBA", "cc": "ANDALUCÍA", "s": 309.0}, {"m": "MasterD", "n": "Coruña", "pr": "LA CORUÑA", "cc": "GALICIA", "s": 65.0}, {"m": "MasterD", "n": "Girona", "pr": "GIRONA", "cc": "CATALUÑA", "s": 97.0}, {"m": "MasterD", "n": "Granada", "pr": "GRANADA", "cc": "ANDALUCÍA", "s": 345.0}, {"m": "MasterD", "n": "San Sebastián", "pr": "GUIPÚZCOA", "cc": "PAÍS VASCO", "s": 141.0}, {"m": "MasterD", "n": "Huelva", "pr": "HUELVA", "cc": "ANDALUCÍA", "s": 187.0}, {"m": "MasterD", "n": "Jaén", "pr": "JAÉN", "cc": "ANDALUCÍA", "s": 217.0}, {"m": "MasterD", "n": "Jaén Comercial", "pr": "JAÉN", "cc": "ANDALUCÍA", "s": 151.0}, {"m": "MasterD", "n": "Lleida", "pr": "LLEIDA", "cc": "CATALUÑA", "s": 131.0}, {"m": "MasterD", "n": "Logroño", "pr": "LA RIOJA", "cc": "LA RIOJA", "s": 82.0}, {"m": "MasterD", "n": "Alonso Cano", "pr": "MADRID", "cc": "COMUNIDAD DE MADRID", "s": 1982.0}, {"m": "MasterD", "n": "Alcalá", "pr": "MADRID", "cc": "COMUNIDAD DE MADRID", "s": 611.0}, {"m": "MasterD", "n": "Alcorcón", "pr": "MADRID", "cc": "COMUNIDAD DE MADRID", "s": 120.0}, {"m": "MasterD", "n": "Velazquez 50", "pr": "MADRID", "cc": "COMUNIDAD DE MADRID", "s": 728.0}, {"m": "MasterD", "n": "Málaga Salitre", "pr": "MÁLAGA", "cc": "ANDALUCÍA", "s": 276.0}, {"m": "MasterD", "n": "Málaga Cuarteles", "pr": "MÁLAGA", "cc": "ANDALUCÍA", "s": 156.0}, {"m": "MasterD", "n": "Murcia Juan Carlos", "pr": "MURCIA", "cc": "MURCIA", "s": 169.0}, {"m": "MasterD", "n": "Murcia Infanta", "pr": "MURCIA", "cc": "MURCIA", "s": 172.0}, {"m": "MasterD", "n": "Pamplona", "pr": "PAMPLONA", "cc": "NAVARRA", "s": 189.0}, {"m": "MasterD", "n": "Oviedo", "pr": "ASTURIAS", "cc": "ASTURIAS", "s": 82.0}, {"m": "MasterD", "n": "Las Palmas", "pr": "GRAN CANARIA", "cc": "ISLAS CANARIAS", "s": 402.0}, {"m": "MasterD", "n": "Vigo", "pr": "PONTEVEDRA", "cc": "GALICIA", "s": 133.0}, {"m": "MasterD", "n": "Tenerife", "pr": "TENERIFE", "cc": "ISLAS CANARIAS", "s": 180.0}, {"m": "MasterD", "n": "Santander", "pr": "CANTABRIA", "cc": "CANTABRIA", "s": 82.0}, {"m": "MasterD", "n": "Sevilla Saramago", "pr": "SEVILLA", "cc": "ANDALUCÍA", "s": 364.0}, {"m": "MasterD", "n": "Sevilla Viapol", "pr": "SEVILLA", "cc": "ANDALUCÍA", "s": 305.0}, {"m": "MasterD", "n": "Tarragona", "pr": "TARRAGONA", "cc": "CATALUÑA", "s": 89.0}, {"m": "MasterD", "n": "Tarragona Comercial", "pr": "TARRAGONA", "cc": "CATALUÑA", "s": 0}, {"m": "MasterD", "n": "Toledo", "pr": "TOLEDO", "cc": "CASTILLA LA MANCHA", "s": 322.0}, {"m": "MasterD", "n": "Valencia Historiador", "pr": "VALENCIA", "cc": "COMUNIDAD VALENCIANA", "s": 1890.0}, {"m": "MasterD", "n": "Valencia Cubells", "pr": "VALENCIA", "cc": "COMUNIDAD VALENCIANA", "s": 516.0}, {"m": "MasterD", "n": "Bilbao Lehendakari", "pr": "VIZCAYA", "cc": "PAÍS VASCO", "s": 58.0}, {"m": "MasterD", "n": "Bilbao Autonomía", "pr": "VIZCAYA", "cc": "PAÍS VASCO", "s": 165.0}, {"m": "MasterD", "n": "Zaragoza Avenida", "pr": "ZARAGOZA", "cc": "ARAGÓN", "s": 191.0}, {"m": "MasterD", "n": "Zaragoza Central", "pr": "ZARAGOZA", "cc": "ARAGÓN", "s": 50.0}, {"m": "MasterD", "n": "Zaragoza Plaza", "pr": "ZARAGOZA", "cc": "ARAGÓN", "s": 542.0}, {"m": "MasterD", "n": "Zaragoza Technocenter", "pr": "ZARAGOZA", "cc": "ARAGÓN", "s": 0}, {"m": "MasterD", "n": "Vitoria", "pr": "ÁLAVA", "cc": "PAÍS VASCO", "s": 122.0}, {"m": "MasterD", "n": "Albacete", "pr": "ALBACETE", "cc": "CASTILLA LA MANCHA", "s": 257.0}, {"m": "MasterD", "n": "Alicante", "pr": "ALICANTE", "cc": "COMUNIDAD VALENCIANA", "s": 262.0}, {"m": "MasterD", "n": "Alicante", "pr": "ALICANTE", "cc": "COMUNIDAD VALENCIANA", "s": 317.0}, {"m": "MasterD", "n": "Almería", "pr": "ALMERÍA", "cc": "ANDALUCÍA", "s": 347.0}, {"m": "MasterD", "n": "Badajoz", "pr": "BADAJOZ", "cc": "EXTREMADURA", "s": 303.0}, {"m": "MasterD", "n": "Mallorca", "pr": "MALLORCA", "cc": "BALEARES", "s": 113.0}, {"m": "MasterD", "n": "Mallorca", "pr": "MALLORCA", "cc": "BALEARES", "s": 29.0}, {"m": "MasterD", "n": "Barcelona Valencia", "pr": "BARCELONA", "cc": "CATALUÑA", "s": 369.0}, {"m": "MasterD", "n": "Barcelona Borrell", "pr": "BARCELONA", "cc": "CATALUÑA", "s": 236.0}, {"m": "MasterD", "n": "Barcelona Provença", "pr": "BARCELONA", "cc": "CATALUÑA", "s": 389.0}, {"m": "MasterD", "n": "Barcelona Tarradellas", "pr": "BARCELONA", "cc": "CATALUÑA", "s": 1437.0}, {"m": "MasterD", "n": "Burgos", "pr": "BURGOS", "cc": "CASTILLA Y LEÓN", "s": 70.0}, {"m": "MasterD", "n": "Valladolid", "pr": "VALLADOLID", "cc": "CASTILLA Y LEÓN", "s": 117.0}, {"m": "RLL", "n": "Roger de Lluria", "pr": "BARCELONA", "cc": "CATALUÑA", "s": 1230.0}]};
+
+// ================================================================
+// NAVIGATION
+// ================================================================
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  const btns = document.querySelectorAll('.nav-btn');
+  const map = {home:0,cartera:1,obras:2,maint:3,licencias:4,arrend:5,sumin:6};
+  if (map[id] !== undefined) btns[map[id]].classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function showTab(section, tab) {
+  const parent = document.getElementById('sec-' + section);
+  parent.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  parent.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-' + section + '-' + tab).classList.add('active');
+}
+
+// ================================================================
+// CHART.JS (inline minimal)
+// We'll load it from a CDN but with a fallback message
+// ================================================================
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+// ================================================================
+// CHARTS INITIALIZATION
+// ================================================================
+const NAVY = '#003594';
+const ORANGE = '#FF5B41';
+const GREEN = '#10B981';
+const RED = '#EF4444';
+const AMBER = '#F59E0B';
+const PURPLE = '#8B5CF6';
+const BLUE = '#3B82F6';
+const GRAY = '#9CA3AF';
+
+const chartDefaults = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { labels: { font: { family: 'Manrope', size: 11 }, padding: 16 } }
+  }
+};
+
+function fmtEur(v) {
+  if (v >= 1e6) return (v/1e6).toFixed(2).replace('.',',') + ' M€';
+  if (v >= 1e3) return (v/1e3).toFixed(0) + ' K€';
+  return v.toFixed(0) + ' €';
+}
+
+// ── CARTERA CHARTS ──
+function initCarteraCharts() {
+  // CCAA bar chart
+  const supByCCAA = {};
+  DATA.sup.forEach(c => { supByCCAA[c.cc] = (supByCCAA[c.cc]||0) + c.s; });
+  const ccaaEntries = Object.entries(supByCCAA).sort((a,b) => b[1]-a[1]);
+
+  new Chart(document.getElementById('chartCCaa'), {
+    type: 'bar',
+    data: {
+      labels: ccaaEntries.map(e => e[0]),
+      datasets: [{
+        data: ccaaEntries.map(e => Math.round(e[1])),
+        backgroundColor: ccaaEntries.map((_,i) => i < 3 ? NAVY : i < 6 ? '#0050c8' : '#7BA3D9'),
+        borderRadius: 4,
+        barThickness: 18
+      }]
+    },
+    options: { ...chartDefaults, indexAxis:'y', plugins:{ ...chartDefaults.plugins, legend:{display:false} },
+      scales: { x:{ grid:{display:false}, ticks:{font:{family:'Manrope',size:10}, callback:v=>v.toLocaleString('es')+' m²'} },
+                y:{ grid:{display:false}, ticks:{font:{family:'Manrope',size:10}} } } }
+  });
+
+  // Populate CCAA filter
+  const sel = document.getElementById('filterCCAA');
+  ccaaEntries.forEach(e => { const o=document.createElement('option'); o.value=e[0]; o.textContent=e[0]; sel.appendChild(o); });
+
+  // Cobertura
+  const cobData = [
+    {name:'Directorio', pct:100}, {name:'MTO Instalaciones', pct:96}, {name:'Superficies', pct:84},
+    {name:'Suministros', pct:83}, {name:'Planos As-Built', pct:56}, {name:'Licencias', pct:52}
+  ];
+  new Chart(document.getElementById('chartCobertura'), {
+    type: 'bar',
+    data: {
+      labels: cobData.map(d=>d.name),
+      datasets: [{ data:cobData.map(d=>d.pct), backgroundColor:cobData.map(d=>d.pct>=80?GREEN:d.pct>=60?AMBER:RED), borderRadius:4, barThickness:20 }]
+    },
+    options: { ...chartDefaults, indexAxis:'y', plugins:{...chartDefaults.plugins, legend:{display:false}},
+      scales: { x:{max:100, grid:{display:false}, ticks:{font:{family:'Manrope',size:10}, callback:v=>v+'%'}},
+                y:{grid:{display:false}, ticks:{font:{family:'Manrope',size:10}}} } }
+  });
+
+  // Marcas donut
+  const marcaData = {MasterD:67, Medac:53, Fundación:17};
+  new Chart(document.getElementById('chartMarcas'), {
+    type: 'doughnut',
+    data: {
+      labels: Object.keys(marcaData),
+      datasets: [{ data:Object.values(marcaData), backgroundColor:[NAVY, ORANGE, GREEN], borderWidth:0, cutout:'65%' }]
+    },
+    options: { ...chartDefaults, plugins:{...chartDefaults.plugins, legend:{position:'right'}} }
+  });
+
+  renderSupTable();
+}
+
+function renderSupTable() {
+  const marca = document.getElementById('filterMarca').value;
+  const ccaa = document.getElementById('filterCCAA').value;
+  let rows = DATA.sup;
+  if (marca) rows = rows.filter(r => r.m === marca);
+  if (ccaa) rows = rows.filter(r => r.cc === ccaa);
+  rows.sort((a,b) => b.s - a.s);
+
+  let html = '<table><tr><th>Centro</th><th>Marca</th><th>Provincia</th><th>CCAA</th><th style="text-align:right">m² útiles</th></tr>';
+  rows.forEach(r => {
+    html += `<tr><td>${r.n}</td><td><span class="badge ${r.m==='Medac'?'badge-amber':r.m==='MasterD'?'badge-blue':'badge-green'}">${r.m}</span></td><td>${r.pr}</td><td>${r.cc}</td><td class="num">${r.s.toLocaleString('es')}</td></tr>`;
+  });
+  html += '</table>';
+  document.getElementById('supTableWrap').innerHTML = html;
+}
+
+// ── OBRAS CHARTS ──
+function initObrasCharts() {
+  // Status donut
+  const statusCounts = {};
+  DATA.obras.forEach(o => { statusCounts[o.s] = (statusCounts[o.s]||0)+1; });
+  const statusColors = {'EN PROGRESO':ORANGE, 'PENDIENTE':AMBER, 'TERMINADO':GREEN, 'DESCARTADOS':GRAY};
+  new Chart(document.getElementById('chartObrasStatus'), {
+    type: 'doughnut',
+    data: {
+      labels: Object.keys(statusCounts),
+      datasets: [{ data:Object.values(statusCounts), backgroundColor:Object.keys(statusCounts).map(k=>statusColors[k]||GRAY), borderWidth:0, cutout:'60%' }]
+    },
+    options: { ...chartDefaults, plugins:{...chartDefaults.plugins, legend:{position:'right'}} }
+  });
+
+  // Budget by tipo
+  const tipoBudget = {};
+  DATA.obras.forEach(o => { tipoBudget[o.t] = (tipoBudget[o.t]||0)+o.b; });
+  const tipoEntries = Object.entries(tipoBudget).sort((a,b)=>b[1]-a[1]);
+  new Chart(document.getElementById('chartObrasTipo'), {
+    type: 'bar',
+    data: {
+      labels: tipoEntries.map(e=>e[0]),
+      datasets: [{ data:tipoEntries.map(e=>e[1]), backgroundColor:[NAVY,ORANGE,BLUE,PURPLE,GRAY], borderRadius:6, barThickness:40 }]
+    },
+    options: { ...chartDefaults, plugins:{...chartDefaults.plugins, legend:{display:false}},
+      scales: { y:{grid:{color:'#F0F0F0'}, ticks:{font:{family:'Manrope',size:10}, callback:v=>fmtEur(v)}}, x:{grid:{display:false}, ticks:{font:{family:'Manrope',size:11}}} } }
+  });
+
+  // Matrix
+  renderObrasMatrix();
+
+  // Populate estado filter
+  const estados = [...new Set(DATA.obras.filter(o=>o.s==='EN PROGRESO').map(o=>o.e))].filter(Boolean).sort();
+  const sel = document.getElementById('filterObraEstado');
+  estados.forEach(e => { const o=document.createElement('option'); o.value=e; o.textContent=e; sel.appendChild(o); });
+  renderObrasTable();
+}
+
+function renderObrasMatrix() {
+  const ep = DATA.obras.filter(o => o.s === 'EN PROGRESO');
+  const tipos = ['Obra Mayor', 'Traslado', 'Obra Menor'];
+  const estados = ['Obra en curso', 'Pendiente coordinar', 'Pendiente presupuesto', 'Búsqueda de proveedor', 'Expediente en curso', 'Finalizada'];
+
+  let html = '<table class="matrix"><tr><th></th>';
+  tipos.forEach(t => html += `<th>${t}</th>`);
+  html += '<th>Total</th></tr>';
+
+  estados.forEach(e => {
+    html += `<tr><td class="row-label">${e}</td>`;
+    let rowTotal = 0, rowBudget = 0;
+    tipos.forEach(t => {
+      const matches = ep.filter(o => o.e === e && o.t === t);
+      const count = matches.length;
+      const budget = matches.reduce((s,o) => s+o.b, 0);
+      rowTotal += count;
+      rowBudget += budget;
+      html += `<td><div class="cell-count">${count||'—'}</div>${budget?'<div class="cell-budget">'+fmtEur(budget)+'</div>':''}</td>`;
+    });
+    html += `<td><div class="cell-count">${rowTotal}</div><div class="cell-budget">${rowBudget?fmtEur(rowBudget):''}</div></td></tr>`;
+  });
+
+  // Totals row
+  html += '<tr style="background:var(--navy);color:white;"><td class="row-label" style="color:white;background:var(--navy);">Total</td>';
+  let grandTotal = 0, grandBudget = 0;
+  tipos.forEach(t => {
+    const matches = ep.filter(o => o.t === t);
+    const count = matches.length;
+    const budget = matches.reduce((s,o) => s+o.b, 0);
+    grandTotal += count; grandBudget += budget;
+    html += `<td style="color:white;"><div class="cell-count" style="color:white;">${count}</div><div class="cell-budget" style="color:rgba(255,255,255,.6);">${fmtEur(budget)}</div></td>`;
+  });
+  html += `<td style="color:white;"><div class="cell-count" style="color:white;">${grandTotal}</div><div class="cell-budget" style="color:rgba(255,255,255,.6);">${fmtEur(grandBudget)}</div></td></tr>`;
+  html += '</table>';
+  document.getElementById('matrixWrap').innerHTML = html;
+}
+
+function renderObrasTable() {
+  const tipo = document.getElementById('filterObraTipo').value;
+  const estado = document.getElementById('filterObraEstado').value;
+  let rows = DATA.obras.filter(o => o.s === 'EN PROGRESO');
+  if (tipo) rows = rows.filter(r => r.t === tipo);
+  if (estado) rows = rows.filter(r => r.e === estado);
+
+  // Sort: Obra Mayor first, then Traslado, then Obra Menor
+  const tipoOrder = {'Obra Mayor':0, 'Traslado':1, 'Obra Menor':2, 'Mobiliario':3, 'Otro':4};
+  rows.sort((a,b) => (tipoOrder[a.t]||9) - (tipoOrder[b.t]||9) || b.b - a.b);
+
+  let html = '<table><tr><th>Clave</th><th>Centro</th><th>Tipo</th><th>Estado</th><th>Director</th><th>PM</th><th style="text-align:right">Presupuesto</th></tr>';
+  rows.forEach(r => {
+    const tipoBadge = r.t==='Obra Mayor'?'badge-purple':r.t==='Traslado'?'badge-blue':r.t==='Obra Menor'?'badge-amber':'badge-gray';
+    html += `<tr><td style="font-weight:600;font-size:11px;">${r.k}</td><td>${r.c}</td><td><span class="badge ${tipoBadge}">${r.t}</span></td><td>${r.e}</td><td>${r.d}</td><td>${r.p}</td><td class="num">${r.b?fmtEur(r.b):'—'}</td></tr>`;
+  });
+  html += '</table>';
+  document.getElementById('obrasTableWrap').innerHTML = html;
+}
+
+// ── MANTENIMIENTO CHARTS ──
+function initMaintCharts() {
+  const m = DATA.maint;
+  const totals = {T:0, E:0, P:0, B:0, R:0, U:0, H:0, N:0, L:0};
+  Object.values(m).forEach(d => { Object.keys(totals).forEach(k => totals[k] += d[k]); });
+
+  // Status donut
+  new Chart(document.getElementById('chartMaintStatus'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Terminado','En progreso','Pendiente','Bloqueado','En revisión'],
+      datasets: [{ data:[totals.T, totals.E, totals.P, totals.B, totals.R], backgroundColor:[GREEN,BLUE,AMBER,RED,PURPLE], borderWidth:0, cutout:'60%' }]
+    },
+    options: { ...chartDefaults, plugins:{...chartDefaults.plugins, legend:{position:'right'}} }
+  });
+
+  // Priority donut
+  new Chart(document.getElementById('chartMaintPrio'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Urgent','High','Normal','Low'],
+      datasets: [{ data:[totals.U, totals.H, totals.N, totals.L], backgroundColor:[RED,ORANGE,BLUE,GRAY], borderWidth:0, cutout:'60%' }]
+    },
+    options: { ...chartDefaults, plugins:{...chartDefaults.plugins, legend:{position:'right'}} }
+  });
+
+  // By director stacked bar
+  const directors = Object.keys(m);
+  new Chart(document.getElementById('chartMaintDir'), {
+    type: 'bar',
+    data: {
+      labels: directors,
+      datasets: [
+        { label:'Terminado', data:directors.map(d=>m[d].T), backgroundColor:GREEN },
+        { label:'En progreso', data:directors.map(d=>m[d].E), backgroundColor:BLUE },
+        { label:'Pendiente', data:directors.map(d=>m[d].P), backgroundColor:AMBER },
+        { label:'Bloqueado', data:directors.map(d=>m[d].B), backgroundColor:RED },
+        { label:'En revisión', data:directors.map(d=>m[d].R), backgroundColor:PURPLE },
+      ]
+    },
+    options: { ...chartDefaults, plugins:{...chartDefaults.plugins, legend:{position:'top'}},
+      scales: { x:{stacked:true, grid:{display:false}, ticks:{font:{family:'Manrope',size:10}}},
+                y:{stacked:true, grid:{color:'#F0F0F0'}, ticks:{font:{family:'Manrope',size:10}}} } }
+  });
+
+  // Table
+  let html = '<table><tr><th>Responsable</th><th style="text-align:right">Total</th><th style="text-align:right">Terminado</th><th style="text-align:right">En progreso</th><th style="text-align:right">Pendiente</th><th style="text-align:right">Bloqueado</th><th style="text-align:right">Urgent</th><th style="text-align:right">High</th><th style="text-align:right">Normal</th></tr>';
+  directors.forEach(d => {
+    const s = m[d];
+    const pctDone = s.t ? Math.round(s.T/s.t*100) : 0;
+    html += `<tr><td style="font-weight:600">${d}</td><td class="num">${s.t}</td><td class="num" style="color:${GREEN}">${s.T} (${pctDone}%)</td><td class="num">${s.E}</td><td class="num">${s.P}</td><td class="num" style="color:${RED}">${s.B}</td><td class="num" style="color:${RED}">${s.U}</td><td class="num" style="color:${ORANGE}">${s.H}</td><td class="num">${s.N}</td></tr>`;
+  });
+  html += '</table>';
+  document.getElementById('maintTableWrap').innerHTML = html;
+}
+
+// ── LICENCIAS CHARTS ──
+function initLicenciasCharts() {
+  const lic = DATA.lic;
+  const labels = Object.keys(lic);
+
+  new Chart(document.getElementById('chartLicStatus'), {
+    type: 'bar',
+    data: {
+      labels: labels.map(l => 'Lic. '+l),
+      datasets: [
+        { label:'OK', data:labels.map(l=>lic[l][0]), backgroundColor:GREEN },
+        { label:'Falta', data:labels.map(l=>lic[l][1]), backgroundColor:RED },
+        { label:'N/A', data:labels.map(l=>lic[l][2]), backgroundColor:'#D1D5DB' },
+        { label:'Otro', data:labels.map(l=>lic[l][3]), backgroundColor:AMBER },
+      ]
+    },
+    options: { ...chartDefaults, plugins:{...chartDefaults.plugins, legend:{position:'top'}},
+      scales: { x:{stacked:true, grid:{display:false}, ticks:{font:{family:'Manrope',size:10}}},
+                y:{stacked:true, grid:{color:'#F0F0F0'}, ticks:{font:{family:'Manrope',size:10}}} } }
+  });
+
+  // Seguimiento evolution
+  const seg = DATA.seg;
+  const segLabels = Object.keys(seg);
+  new Chart(document.getElementById('chartLicSeg'), {
+    type: 'line',
+    data: {
+      labels: segLabels.map(s => s.replace('2602','Feb ').replace('2603','Mar ')),
+      datasets: [{
+        label: 'Centros en seguimiento',
+        data: segLabels.map(s => seg[s]),
+        borderColor: NAVY,
+        backgroundColor: 'rgba(0,53,148,.1)',
+        fill: true,
+        tension: .3,
+        pointRadius: 5,
+        pointBackgroundColor: NAVY,
+        borderWidth: 2
+      }]
+    },
+    options: { ...chartDefaults, plugins:{...chartDefaults.plugins, legend:{display:false}},
+      scales: { y:{beginAtZero:true, grid:{color:'#F0F0F0'}, ticks:{font:{family:'Manrope',size:10}}},
+                x:{grid:{display:false}, ticks:{font:{family:'Manrope',size:10}}} } }
+  });
+
+  renderLicTable();
+}
+
+function renderLicTable() {
+  const filter = document.getElementById('filterLicEstado').value;
+  const search = document.getElementById('filterLicSearch').value.toLowerCase();
+  let rows = DATA.licDetail;
+
+  if (search) rows = rows.filter(r => r.n.toLowerCase().includes(search));
+  if (filter === 'FALTA') rows = rows.filter(r => [r.o,r.a,r.e,r.b,r.p,r.t,r.c].some(v=>v==='FALTA'));
+  else if (filter === 'OK') rows = rows.filter(r => [r.o,r.a,r.e,r.b,r.p,r.t,r.c].every(v=>v==='OK'||v==='N/A'||v==='-'));
+
+  function semaHTML(v) {
+    if (v==='OK') return '<span class="sema sema-ok">✓</span>';
+    if (v==='FALTA') return '<span class="sema sema-falta">✗</span>';
+    if (v==='N/A'||v==='-') return '<span class="sema sema-na">—</span>';
+    return '<span class="sema sema-other">!</span>';
+  }
+
+  let html = '<table><tr><th>Centro</th><th>Razón</th><th>Obra</th><th>Apertura</th><th>Educación</th><th>BT</th><th>PCI</th><th>Térmicas</th><th>CEE</th></tr>';
+  rows.forEach(r => {
+    html += `<tr><td style="font-weight:600;font-size:11px;">${r.n}</td><td>${r.r}</td><td>${semaHTML(r.o)}</td><td>${semaHTML(r.a)}</td><td>${semaHTML(r.e)}</td><td>${semaHTML(r.b)}</td><td>${semaHTML(r.p)}</td><td>${semaHTML(r.t)}</td><td>${semaHTML(r.c)}</td></tr>`;
+  });
+  html += '</table>';
+  document.getElementById('licTableWrap').innerHTML = html;
+}
+
+// ================================================================
+// INIT
+// ================================================================
+document.addEventListener('DOMContentLoaded', () => {
+  if (typeof Chart === 'undefined') {
+    document.querySelectorAll('.chart-wrap').forEach(w => {
+      w.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-light);font-size:13px;">⚠ Chart.js no disponible. Abre el archivo con conexión a internet o usa la versión offline.</div>';
+    });
+  } else {
+    initCarteraCharts();
+    initObrasCharts();
+    initMaintCharts();
+    initLicenciasCharts();
+  }
+});
+</script>
+</body>
+</html>
